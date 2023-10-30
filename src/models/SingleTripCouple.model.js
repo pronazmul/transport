@@ -18,4 +18,3 @@ const SingleTripCoupleModel = model('SingleTripCouple', SingleTripCouple)
 
 // Export User Model
 export default SingleTripCoupleModel
-

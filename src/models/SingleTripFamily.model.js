@@ -8,6 +8,7 @@ const SingleTripFamily = Schema({
   age1: Number,
   age2: Number,
   days: Number,
+  noofDependents: Number,
   companyName: String,
   cost: Number,
   logo: String,
