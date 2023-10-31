@@ -1,42 +1,29 @@
 {
-  "name": "car-parking-v1",
-  "version": "1.0.0",
-  "description": "Car Parking Rest Api",
-  "type": "module",
-  "main": "app.js",
+  "name": "app_my",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "start": "NODE_ENV=production node app.js",
-    "dev": "NODE_ENV=development nodemon app.js",
-    "data:import": "node src/config/seeder",
-    "data:destroy": "node src/config/seeder -d",
-    "data:test": "node _temp"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
-  "author": "Nazmul Huda",
-  "license": "ISC",
   "dependencies": {
-    "axios": "^0.27.2",
-    "bcrypt": "^5.0.1",
-    "colors": "^1.4.0",
-    "cookie-parser": "^1.4.6",
-    "cors": "^2.8.5",
-    "date-fns": "^2.30.0",
-    "dotenv": "^10.0.0",
-    "express": "^4.17.2",
-    "express-rate-limit": "^6.0.5",
-    "http-errors": "^2.0.0",
-    "jsonwebtoken": "^8.5.1",
-    "moment": "^2.29.4",
-    "mongoose": "^6.1.7",
-    "mongoose-unique-validator": "^3.0.0",
-    "morgan": "^1.10.0",
-    "multer": "^1.4.4",
-    "node-device-detector": "^2.0.8",
-    "sharp": "^0.30.3",
-    "winston": "^3.9.0",
-    "winston-daily-rotate-file": "^4.7.1",
-    "yup": "^0.32.11"
+    "@next/swc-win32-x64-msvc": "^14.0.1",
+    "chart.js": "^4.4.0",
+    "mongodb": "^6.2.0",
+    "next": "14.0.0",
+    "react": "^18",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18"
   },
   "devDependencies": {
-    "@types/sharp": "^0.32.0"
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10",
+    "postcss": "^8",
+    "tailwindcss": "^3",
+    "typescript": "^5"
   }
 }
