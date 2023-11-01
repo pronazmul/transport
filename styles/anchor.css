@@ -1,0 +1,36 @@
+.ant-anchor-link-title {
+  color: white !important;
+}
+
+.ant-anchor-ink.ant-anchor-ink-visible {
+  background-color: #ff9800 !important;
+}
+
+.ant-anchor-link-title.ant-anchor-link-title-active {
+  color: white !important;
+}
+
+.ant-collapse-header {
+  color: white !important;
+}
+
+.ant-collapse-content-box {
+  color: white !important;
+}
+
+.ant-dropdown-menu {
+  background: #ff9800 !important;
+}
+
+.ant-dropdown-menu-item:hover {
+  background: #ffbf4e !important;
+}
+
+.ant-dropdown-menu-submenu-title:hover {
+  background: #ffbf4e !important;
+}
+
+.ant-dropdown-menu-submenu .ant-dropdown-menu-submenu-vertical{
+  background: #ffbf4e !important;
+  display: none;
+}
