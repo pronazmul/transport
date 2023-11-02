@@ -280,8 +280,7 @@ export default function MainNav() {
 
                         {item.name === 'Travel Insurance' && (
                           <>
-                            {console.log(item.name, 'Item')}
-                            <Dropdown menu={{ items: travelInsuranceItems }}>
+                            <Dropdown key={index} menu={{ items: travelInsuranceItems }}>
                               <div className='flex items-center gap-1  px-2'>
                                 <a
                                   key={item.name}
@@ -303,7 +302,7 @@ export default function MainNav() {
                           </>
                         )}
                         {item.name === 'Others' && (
-                          <Dropdown menu={{ items: otherItems }}>
+                          <Dropdown  key={index} menu={{ items: otherItems }}>
                             <div className='flex items-center gap-1 px-2'>
                               <a
                                 key={item.name}
@@ -352,7 +351,6 @@ export default function MainNav() {
                 <>
                   {item.name === 'Products' && (
                     <div key={index} className='flex flex-col'>
-                      {console.log(item.name, 'Item')}
                       <Dropdown menu={{ items }}>
                         <a
                           key={item.name}
@@ -370,7 +368,7 @@ export default function MainNav() {
                     </div>
                   )}
                   {item.name === 'Quotes' && (
-                    <Dropdown menu={{ items: quoteItems }}>
+                    <Dropdown  key={index} menu={{ items: quoteItems }}>
                       <a
                         key={item.name}
                         className={classNames(

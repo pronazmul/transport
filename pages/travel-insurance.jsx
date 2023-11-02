@@ -3,6 +3,7 @@ import { HeroSection } from "@/components/HeroSection/HeroSection";
 import { Collapse } from "antd";
 
 import { travelInsuranceItems } from "@/data/faqs/travel-insurance";
+import TravelInsuranceQoute from "@/components/TravelInsuranceQoute";
 const TravelInsurancePage = () => {
   return (
     <>
@@ -16,8 +17,8 @@ const TravelInsurancePage = () => {
         img={"/images/sub/travel.jpg"}
       />
 
-      <div className="relative top-[-165px]">
-        <CoverageDetail />
+      <div className="relative top-[-165px] py-20 ">
+        <TravelInsuranceQoute />
       </div>
 
       <div className="container mx-auto relative top-[-105px] flex flex-col gap-5">

@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 
+
 import axios from "axios";
 import { baseURL } from "@/utils/helper";
 import { toast } from "react-toastify";
-
+import PlanCard from "../QouteForm/PlanCard";
 import Sidebar from "./Sidebar";
 import QouteForm from "../QouteForm/QouteForm";
-import PlanCard from "../QouteForm/PlanCard";
 
-const SuperVisaQoute = () => {
+const StudentInsuranceQoute = () => {
   const [qoutes, setQoutes] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -16,14 +16,20 @@ const SuperVisaQoute = () => {
     setLoading(true);
     let url = "";
     if (values.type === "SINGLE") {
-      url = `/single?age=${values.age1}&coverage=${values.coverage1}&preExistingMedicalConditions=${values.preExistingMedicalConditions1}`;
+      url = `/single?age1=${values.age1}&days1=${values.days1}`;
     }
 
     if (values.type === "DOUBLE") {
-      url = `/couple?age1=${values.age1}&age2=${values.age2}&coverage1=${values.coverage1}&coverage2=${values.coverage2}&preExistingMedicalConditions1=${values.preExistingMedicalConditions}&preExistingMedicalConditions2=${values.preExistingMedicalConditions1}`;
+      url = `/couple?age1=${values.age1}&age2=${values.age2}&days1=${values.days1}`;
+    }
+    if(values.type === "FAMILY"){
+      url = `/family?age1=${values.age1}&age2=${values.age2}&days1=${values.days1}&noOfDependents=${values.dependents}`;
+
     }
 
-    const res = await axios.get(`${baseURL}/qoutes/superVisa${url}`);
+
+    const res = await axios.get(`${baseURL}/qoutes/student${url}`);
+
     if (res.status === 200) {
       if (!res.data.length) {
         toast.warning("Qoute not found!. Try to change date");
@@ -55,9 +61,9 @@ const SuperVisaQoute = () => {
     <QouteForm
       getQoute={getQoute}
       loading={loading}
-      insuranceType={"supervisa"}
+      insuranceType={"student"}
     />
   );
 };
 
-export default SuperVisaQoute;
+export default StudentInsuranceQoute;

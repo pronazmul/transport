@@ -1,5 +1,6 @@
 import { CoverageDetail } from "@/components/CoverageDetail";
 import { HeroSection } from "@/components/HeroSection/HeroSection";
+import StudentInsuranceQoute from "@/components/StudentInsuranceQoute";
 import { internationalStudentsInsuranceFAQs } from "@/data/faqs/international-student-insurance";
 import { Collapse } from "antd";
 const StudentInsurance = () => {
@@ -13,8 +14,8 @@ const StudentInsurance = () => {
         position="top"
       />
 
-      <div className="relative top-[-165px]">
-        <CoverageDetail />
+      <div className="relative top-[-165px] py-20 ">
+        <StudentInsuranceQoute />
       </div>
 
       <div className="container mx-auto relative top-[-105px] flex flex-col gap-5">
