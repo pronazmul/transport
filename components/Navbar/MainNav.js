@@ -230,9 +230,7 @@ export default function MainNav() {
     <Disclosure as='nav'>
       {({ open }) => (
         <>
-          <div
-            className={`mx-auto xl:px-0  px-5 max-w-7xl `}
-          >
+          <div className={`mx-auto xl:px-0  px-5 max-w-7xl `}>
             <div className='relative flex h-10 items-center justify-between'>
               <div className='absolute inset-y-0 left-0 flex items-center lg:hidden'>
                 {/* Mobile menu button*/}
@@ -249,12 +247,12 @@ export default function MainNav() {
               <div className='flex flex-1 items-center justify-center sm:items-stretch sm:justify-start'>
                 <div className='hidden lg:block'>
                   <div className='flex space-x-2'>
-                    {navigation.map((item) => (
+                    {navigation.map((item, index) => (
                       <>
                         {item.name === 'Life Insurance' && (
                           <>
-                            {console.log(item.name, 'Item')}
                             <Dropdown
+                              key={index}
                               menu={{
                                 items: lifeInsuranceItems,
                               }}
@@ -350,10 +348,10 @@ export default function MainNav() {
 
           <Disclosure.Panel className='lg:hidden'>
             <div className='space-y-1 px-2 pb-3 pt-2'>
-              {navigation.map((item) => (
+              {navigation.map((item, index) => (
                 <>
                   {item.name === 'Products' && (
-                    <div className='flex flex-col'>
+                    <div key={index} className='flex flex-col'>
                       {console.log(item.name, 'Item')}
                       <Dropdown menu={{ items }}>
                         <a
