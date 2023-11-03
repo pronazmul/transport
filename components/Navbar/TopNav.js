@@ -44,7 +44,7 @@ const TopNav = () => {
           <div className=' sm:flex hidden gap-3 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0'>
             <img src='/images/navbarPhone.png' alt='navbar' />
             <div className='flex flex-col'>
-              <span className='text-lg text-white'>+1 (647) 469-8766</span>
+              <span className='text-lg text-white'>+1 (866) 678-2899</span>
             </div>
           </div>
         </div>

@@ -24,7 +24,7 @@ const RESP = () => {
       </div>
       <div className="container mx-auto relative top-[-105px] flex flex-col gap-5">
         <div className="space-y-1">
-          <h1 className="font-bold text-lg">RESP Insurance</h1>
+          <h1 className="font-bold text-lg">RESP</h1>
           <table className="pt-5 w-full text-center overflow-x-auto">
             <thead>
               <tr>

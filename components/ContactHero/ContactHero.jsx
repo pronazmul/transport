@@ -24,12 +24,12 @@ export const ContactHero = () => {
             <div className='bg-white bg-opacity-25 backdrop-blur-lg p-6 rounded-lg space-y-2'>
               <i className='fa-lg fa fa-phone' aria-hidden='true'></i>
               <h2 className='text-yellow-500 font-bold text-xl'>Phone</h2>
-              <p className='text-xs'>+1 647 469 8766</p>
+              <p className='text-xs'>+1 (866) 678-2899</p>
             </div>
             <div className='bg-white bg-opacity-25 backdrop-blur-lg p-6 rounded-lg space-y-2'>
               <i className='fa-lg fa fa-envelope' aria-hidden='true'></i>
               <h2 className='text-yellow-500 font-bold text-xl'>Email</h2>
-              <p className='text-xs'>info@lifeinsurancecanada.com</p>
+              <p className='text-xs'>advisor@insurancebuzz.ca</p>
             </div>
             <div className='bg-white bg-opacity-25 backdrop-blur-lg p-6 rounded-lg space-y-2'>
               <i className='fa-lg fa fa-calendar' aria-hidden='true'></i>

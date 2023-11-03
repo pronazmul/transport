@@ -30,7 +30,7 @@ const TFSA = () => {
 
       <div className="container mx-auto relative top-[-105px] flex flex-col gap-5">
         <div className="space-y-1">
-          <h1 className="font-bold text-lg">TFSA Insurance</h1>
+          <h1 className="font-bold text-lg">TFSA</h1>
           <table className="pt-5 w-full text-center overflow-x-auto">
             <thead>
               <tr>

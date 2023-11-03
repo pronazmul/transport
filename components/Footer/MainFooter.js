@@ -120,8 +120,8 @@ const MainFooter = () => {
 
         <div className='flex flex-col gap-2'>
           <span className='font-bold text-white'>Contact Us</span>
-          <span className=' text-white'>vidya@insurancebuzz.ca</span>
-          <span className=' text-white'>+1(647)469-8766</span>
+          <span className=' text-white'>advisor@insurancebuzz.ca</span>
+          <span className=' text-white'>+1 (866) 678-2899</span>
 
           <div className='flex gap-3 mt-5 items-center'>
             <i

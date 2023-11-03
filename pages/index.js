@@ -80,7 +80,7 @@ export default function Home() {
             />
             <InsuranceSolutions
               image={'/images/building-orange.png'}
-              countNumber={30}
+              countNumber={50}
               suffix={'+'}
               title={'Insurance Companies'}
             />
@@ -92,7 +92,7 @@ export default function Home() {
             />
             <InsuranceSolutions
               image={'/images/insurancesol2-orange.png'}
-              countNumber={8}
+              countNumber={15}
               suffix={'+'}
               title={'Insurance Types'}
             />

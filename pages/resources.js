@@ -18,6 +18,7 @@ import AutoInsurance from '@/components/Resources/AutoInsurance'
 import HomeInsurance from '@/components/Resources/HomeInsurance'
 import VisitorCanada from '@/components/Resources/VisitorCanada'
 import ClaimProcess from '@/components/Resources/ClaimProcess'
+import ClaimContracts from '@/components/Resources/ClaimContracts'
 
 const items = [
   {
@@ -114,6 +115,11 @@ const items = [
     label: 'Claims Process',
   },
   {
+    key: 'claim-contract',
+    href: '#claim-contract',
+    label: 'Claims Contracts',
+  },
+  {
     key: 'important-links',
     href: '#important-links',
     label: 'Important Links',
@@ -149,39 +155,37 @@ const ResourcesPage = () => {
       case 'life-insurance':
         return <LifeInsurance color='#305fa9' />
       case 'critical-insurance':
-        return <CriticalInsurance color='#256c18CC' />
+        return <CriticalInsurance color='#308b84' />
       case 'disability-insurance':
-        return <DisabilityInsurance color='#308b84' />
+        return <DisabilityInsurance color='#305fa9' />
       case 'health-insurance':
-        return <HelthInsurance color='#305fa9'/>
-      case 'term-insurance':
-        return <TermInsurance color='#308b84' />
-      case 'travel-insurance':
-        return <TravelInsurance color='#256c18CC'/>
-      case 'international-students-insurance':
-        return <IntStudentInsurance color='#305fa9'/>
+        return <HelthInsurance color='#308b84'/>
+      case 'visitor-to-canada-insurance':
+        return <VisitorCanada color='#305fa9'/>
       case 'supervisa-insurance':
         return <SuperVisaInsurance color='#308b84'/>
-      case 'resp':
-        return <RESP color='#256c18CC'/>
+      case 'travel-insurance':
+        return <TravelInsurance color='#305fa9'/>
+      case 'international-students-insurance':
+        return <IntStudentInsurance color='#308b84'/>
+      case 'auto-insurance':
+        return <AutoInsurance color='#305fa9' />
+      case 'home-insurance':
+        return <HomeInsurance color='#308b84'/>
       case 'rrsp':
         return <RRSP color='#305fa9' />
       case 'tfsa':
         return <TFSA color='#308b84'/>
-      case 'claim-insurance':
-        return <LifeInsurance color='#256c18CC'/>
-      case 'important-links':
-        return <ImportantLinks color='#305fa9'/>
-      case 'auto-insurance':
-        return <AutoInsurance color='#308b84' />
-      case 'home-insurance':
-        return <HomeInsurance color='#256c18CC'/>
-      case 'visitor-to-canada-insurance':
-        return <VisitorCanada color='#305fa9'/>
+      case 'resp':
+        return <RESP color='#305fa9'/>
       case 'claim-process':
         return <ClaimProcess color='#308b84'/>
+      case 'claim-contract':
+        return <ClaimContracts color='#305fa9'/>
+      case 'important-links':
+        return <ImportantLinks color='#308b84'/>
       default:
-        return <LifeInsurance color='#256c18CC'/>
+        return <LifeInsurance color='#305fa9'/>
     }
   }
 

@@ -58,17 +58,17 @@ export const ContactPageForm = () => {
         <div className='flex gap-4'>
           <i class='fa fa-phone' aria-hidden='true'></i>
 
-          <p className='text-gray-800 text-sm'>+1 647 469 8766</p>
+          <p className='text-gray-800 text-sm'>+1 (866) 678-2899</p>
         </div>
 
         <div className='flex gap-4'>
           <i class='fa fa-envelope' aria-hidden='true'></i>
-          <p className='text-gray-800 text-sm'>vidyakittur15@gmail.com</p>
+          <p className='text-gray-800 text-sm'>advisor@insurancebuzz.ca</p>
         </div>
         <div className='flex gap-4'>
           <i class='fa fa-globe' aria-hidden='true'></i>
 
-          <p className='text-gray-800 text-sm'> insurancebuzz.ca</p>
+          <p className='text-gray-800 text-sm'>insurancebuzz.ca</p>
         </div>
       </div>
     </div>
