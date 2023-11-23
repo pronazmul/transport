@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 2
+    },
+    "auditLog": "I:\\Fiverr_Marketplace\\USA\\liam Trampota\\LocidMark\\logs\\successes\\.c625af944a09c8be6712eb0613625019b293fc00-audit.json",
+    "files": [
+        {
+            "date": 1700672557630,
+            "name": "I:\\Fiverr_Marketplace\\USA\\liam Trampota\\LocidMark\\logs\\successes\\2023-22-11-23-success.log",
+            "hash": "af8f73d533d26fd53f6f50d333bc2eb40cd2ec63132249b1780b364891f09122"
+        }
+    ],
+    "hashType": "sha256"
+}

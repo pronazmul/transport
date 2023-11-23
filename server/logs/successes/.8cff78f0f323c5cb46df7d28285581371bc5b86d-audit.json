@@ -1,0 +1,40 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 2
+    },
+    "auditLog": "I:\\Fiverr_Marketplace\\USA\\liam Trampota\\LocidMark\\server\\logs\\successes\\.8cff78f0f323c5cb46df7d28285581371bc5b86d-audit.json",
+    "files": [
+        {
+            "date": 1700711656493,
+            "name": "I:\\Fiverr_Marketplace\\USA\\liam Trampota\\LocidMark\\server\\logs\\successes\\2023-23-11-09-success.log",
+            "hash": "1b626ac6d0807d9ea7f9c470cfc30de1698f4e9e5f70d7a50f1af664c9fd0112"
+        },
+        {
+            "date": 1700714700744,
+            "name": "I:\\Fiverr_Marketplace\\USA\\liam Trampota\\LocidMark\\server\\logs\\successes\\2023-23-11-10-success.log",
+            "hash": "7fac1a530ba1673975c7ada46f9ea0bc425b8540c24fb49551a9807559afdcbb"
+        },
+        {
+            "date": 1700715705751,
+            "name": "I:\\Fiverr_Marketplace\\USA\\liam Trampota\\LocidMark\\server\\logs\\successes\\2023-23-11-11-success.log",
+            "hash": "6b351adea1357bbe0b6c09f889eea5e746f12fd4cb50bf0cae394319f94535aa"
+        },
+        {
+            "date": 1700733101600,
+            "name": "I:\\Fiverr_Marketplace\\USA\\liam Trampota\\LocidMark\\server\\logs\\successes\\2023-23-11-15-success.log",
+            "hash": "3688e1918ae0c3b082e6232112554f4d4945ce8cbdd492d169636b5f491efd26"
+        },
+        {
+            "date": 1700736558534,
+            "name": "I:\\Fiverr_Marketplace\\USA\\liam Trampota\\LocidMark\\server\\logs\\successes\\2023-23-11-16-success.log",
+            "hash": "5dcbccd0fd090be689175407303d45f9a8b986a11268f9bc6e6c5d29d5c30fd3"
+        },
+        {
+            "date": 1700739166035,
+            "name": "I:\\Fiverr_Marketplace\\USA\\liam Trampota\\LocidMark\\server\\logs\\successes\\2023-23-11-17-success.log",
+            "hash": "d6cfa1d426c7a7b86aeaf56e56813aba1a40b4e2991414ee7f524296573e66d5"
+        }
+    ],
+    "hashType": "sha256"
+}
