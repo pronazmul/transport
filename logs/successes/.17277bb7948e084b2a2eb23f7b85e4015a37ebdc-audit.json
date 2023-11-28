@@ -1,0 +1,20 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 2
+    },
+    "auditLog": "I:\\Fiverr_Marketplace\\USA\\Dsimson\\four-square-api\\logs\\successes\\.17277bb7948e084b2a2eb23f7b85e4015a37ebdc-audit.json",
+    "files": [
+        {
+            "date": 1701169023949,
+            "name": "I:\\Fiverr_Marketplace\\USA\\Dsimson\\four-square-api\\logs\\successes\\2023-28-11-16-success.log",
+            "hash": "76ece22d14bc3153f57f47fef3cbeafbe4b1367b3069c05baf3cef5e66be07cc"
+        },
+        {
+            "date": 1701169377210,
+            "name": "I:\\Fiverr_Marketplace\\USA\\Dsimson\\four-square-api\\logs\\successes\\2023-28-11-17-success.log",
+            "hash": "d15cbf9091e9e1ad032c0c0497fdaad2d16ebbd336788fd45f8ff1005e4b8072"
+        }
+    ],
+    "hashType": "sha256"
+}

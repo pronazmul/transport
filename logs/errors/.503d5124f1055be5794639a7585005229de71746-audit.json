@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 2
+    },
+    "auditLog": "I:\\Fiverr_Marketplace\\CANADA\\Insurance_buzz\\server\\logs\\errors\\.503d5124f1055be5794639a7585005229de71746-audit.json",
+    "files": [
+        {
+            "date": 1698203519455,
+            "name": "I:\\Fiverr_Marketplace\\CANADA\\Insurance_buzz\\server\\logs\\errors\\2023-25-10-09-error.log",
+            "hash": "02af62dceb059c7169be7e48ff263a11b5a768223e5e49b2406f5b57971f5777"
+        }
+    ],
+    "hashType": "sha256"
+}
