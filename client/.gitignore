@@ -4,7 +4,11 @@
 /node_modules
 /.pnp
 .pnp.js
-
+/.firebase
+/.vscode
+/.env
+/.eslintc.json
+/firebase.json
 # testing
 /coverage
 
