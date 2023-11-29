@@ -9,7 +9,7 @@
   <body>
     <div id="root"></div>
 
-   <script
+    <script
       src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"
       integrity="sha512-b94Z6431JyXY14iSXwgzeZurHHRNkLt9d6bAHt7BZT38eqV+GyngIi/tVye4jBKPYQ2lBdRs0glww4fmpuLRwA=="
       crossorigin="anonymous"
@@ -95,7 +95,39 @@
           const xml = parser.parseFromString(response.data, 'text/xml')
           let data = xmlToJson(xml)
 
-          console.log({ data })
+          console.log(data)
+
+          let pagination = {
+            pageNo:
+              Number(
+                data?.findItemsByKeywordsResponse?.paginationOutput?.pageNumber[
+                  '#text'
+                ]
+              ) || 0,
+            totalEntries:
+              Number(
+                data?.findItemsByKeywordsResponse?.paginationOutput
+                  ?.totalEntries['#text']
+              ) || 0,
+            totalPages:
+              Number(
+                data?.findItemsByKeywordsResponse?.paginationOutput?.totalPages[
+                  '#text'
+                ]
+              ) || 0,
+          }
+
+          let output =
+            data?.findItemsByKeywordsResponse?.searchResult?.item || []
+
+          output = output.map((item) => ({
+            id: item?.itemId['#text'] || '',
+            title: item?.title['#text'] || '',
+            image:
+              item?.galleryURL['#text'].replace('140.jpg', '1600.jpg') || '',
+          }))
+
+          return { output, pagination }
         }
 
         find()
