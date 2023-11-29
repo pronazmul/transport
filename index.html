@@ -3,105 +3,137 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./style.css" />
-    <title>eBay + Benin Bronzes</title>
-  </head>
-  <body>
-    <div id="root"></div>
+    <title>Card List with Pagination</title>
+    <!-- Include Tailwind CSS (you may need to adjust the path based on your project structure) -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .card-details {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        padding: 20px;
+      }
 
-   <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"
-      integrity="sha512-b94Z6431JyXY14iSXwgzeZurHHRNkLt9d6bAHt7BZT38eqV+GyngIi/tVye4jBKPYQ2lBdRs0glww4fmpuLRwA=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
+      .card:hover .card-details {
+        display: block;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 p-8">
+    <div
+      id="pagination"
+      class="mb-8 flex items-center justify-center space-x-4"
+    ></div>
+
+    <div
+      id="cardList"
+      class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+    ></div>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const XEBAY_API_URL = 'https://svcs.ebay.com/'
-        const XEBAY_SOA_SECURITY_APPNAME =
-          'repatria-testapp-PRD-dfcc2d46c-a326c721'
-        const XEBAY_SOA_GLOBAL_ID = 'EBAY-US'
-        const XEBAY_SOA_OPERATION_NAME = 'findItemsByKeywords'
-        const CORS_API_KEY = 'temp_02f7ba0c56f4562668570e98e47aa170'
+      // Generate 100 dummy data entries
+      const dummyData = Array.from({ length: 1000 }, (_, index) => ({
+        id: index + 1,
+        title: `Card ${index + 1}`,
+        details: `Details for Card ${index + 1}`,
+      }))
 
-        const searchQuery = 'Benin Bronzes'
-        let searchResults = []
-        let isLoading = false
-        let pageNumber = 1
-        let entriesPerPage = 100
-        let totalPages = 0
-        let hasMore = true
-        let totalEntries = 0
-        let showInfoPopup = false
-        let activeTab = 0
-        let hoveredImage = null
-        let hoveredImageIndex = null
+      const itemsPerPage = 10
+      let currentPage = 1
 
-        async function find() {
-          const response = await axios.get(
-            `https://proxy.cors.sh/${XEBAY_API_URL}services/search/FindingService/v1?keywords=${searchQuery}&paginationInput.pageNumber=1&paginationInput.entriesPerPage=${entriesPerPage}`,
-            {
-              headers: {
-                'X-EBAY-SOA-SECURITY-APPNAME': XEBAY_SOA_SECURITY_APPNAME,
-                'X-EBAY-SOA-GLOBAL-ID': XEBAY_SOA_GLOBAL_ID,
-                'X-EBAY-SOA-OPERATION-NAME': XEBAY_SOA_OPERATION_NAME,
-                'x-cors-api-key': CORS_API_KEY,
-              },
-            }
+      function displayCards(page) {
+        const start = (page - 1) * itemsPerPage
+        const end = start + itemsPerPage
+        const paginatedData = dummyData.slice(start, end)
+
+        const cardList = document.getElementById('cardList')
+        cardList.innerHTML = ''
+
+        paginatedData.forEach((item) => {
+          const card = document.createElement('div')
+          card.classList.add(
+            'card',
+            'bg-white',
+            'p-4',
+            'rounded',
+            'shadow-md',
+            'relative',
+            'cursor-pointer'
           )
 
-          function xmlToJson(xml) {
-            const result = {}
-            // Element node
-            if (xml.nodeType === 1) {
-              // If attributes exist, add them to the result object
-              if (xml.attributes.length > 0) {
-                result['@attributes'] = {}
-                for (let i = 0; i < xml.attributes.length; i++) {
-                  const attribute = xml.attributes[i]
-                  result['@attributes'][attribute.nodeName] =
-                    attribute.nodeValue
-                }
-              }
-            } else if (xml.nodeType === 3) {
-              // Text node
-              return xml.nodeValue.trim()
-            }
+          const cardTitle = document.createElement('h3')
+          cardTitle.textContent = item.title
 
-            // Process child nodes
-            if (xml.hasChildNodes()) {
-              for (let i = 0; i < xml.childNodes.length; i++) {
-                const child = xml.childNodes[i]
-                const nodeName = child.nodeName
+          const cardDetails = document.createElement('div')
+          cardDetails.classList.add('card-details')
+          cardDetails.innerHTML = `<p>${item.details}</p>`
 
-                if (result[nodeName] === undefined) {
-                  result[nodeName] = xmlToJson(child)
-                } else {
-                  if (result[nodeName].push === undefined) {
-                    const prevValue = result[nodeName]
-                    result[nodeName] = []
-                    result[nodeName].push(prevValue)
-                  }
-                  result[nodeName].push(xmlToJson(child))
-                }
-              }
-            }
+          card.appendChild(cardTitle)
+          card.appendChild(cardDetails)
+          cardList.appendChild(card)
+        })
+      }
 
-            return result
-          }
+      function displayPagination() {
+        const totalPages = Math.ceil(dummyData.length / itemsPerPage)
+        const pagination = document.getElementById('pagination')
+        pagination.innerHTML = ''
 
-          const parser = new DOMParser()
-          const xml = parser.parseFromString(response.data, 'text/xml')
-          let data = xmlToJson(xml)
+        const startPage = Math.max(1, currentPage - 2)
+        const endPage = Math.min(totalPages, startPage + 4)
 
-          console.log({ data })
+        if (currentPage > 1) {
+          const prevButton = createPageButton(currentPage - 1, 'Prev')
+          pagination.appendChild(prevButton)
         }
 
-        find()
-      })
-    </script>
+        for (let i = startPage; i <= endPage; i++) {
+          const pageButton = createPageButton(i)
+          pagination.appendChild(pageButton)
+        }
 
-    <!-- <script src="./script.js"></script> -->
+        if (currentPage < totalPages) {
+          const nextButton = createPageButton(currentPage + 1, 'Next')
+          pagination.appendChild(nextButton)
+        }
+      }
+
+      function createPageButton(page, text = `${page}`) {
+        const pageButton = document.createElement('button')
+        pageButton.textContent = text
+        pageButton.classList.add(
+          'px-3',
+          'py-1',
+          'bg-blue-500',
+          'text-white',
+          'rounded',
+          'hover:bg-blue-700',
+          'cursor-pointer'
+        )
+        pageButton.addEventListener('click', () => {
+          currentPage = page
+          displayCards(currentPage)
+          displayPagination()
+        })
+
+        if (page === currentPage) {
+          pageButton.classList.add('bg-blue-700')
+        }
+
+        return pageButton
+      }
+
+      // Initial display
+      displayCards(currentPage)
+      displayPagination()
+    </script>
   </body>
 </html>
