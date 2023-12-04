@@ -1,7 +1,5 @@
 // Required Packeges
 import { Schema, model, Types } from 'mongoose'
-import config from '../config/index.js'
-import GlobalConst from '../consts/global.const.js'
 
 const FollowerSchema = Schema(
   {

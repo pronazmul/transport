@@ -18,7 +18,15 @@ AuthController.register = async (req, res, next) => {
 
     // Create User
     let user = await UserService.create(data)
-    let response = GlobalUtils.fromatResponse(user, 'User Created  Success!')
+
+    let token = AuthUtils.jwtSign(user)
+    let response = GlobalUtils.fromatResponse(
+      {
+        ...user,
+        token: token,
+      },
+      'User Register Success!'
+    )
 
     res.status(200).json(response)
   } catch (error) {

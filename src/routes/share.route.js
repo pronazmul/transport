@@ -12,7 +12,7 @@ const router = Router()
  * @Access protected - []
  * @returns {Array} - All Data
  */
-router.get('/:userId', ShareController.allFavourites)
+router.get('/:userId', ShareController.singleSharedById)
 
 /**
  * @description Share Place
@@ -20,7 +20,7 @@ router.get('/:userId', ShareController.allFavourites)
  * @Access protected - []
  * @returns {Object} - Single Object
  */
-router.post('/:placeId', ShareController.addToFavourite)
+router.post('/:placeId', ShareController.sharePlace)
 
 // Exports
 export default router

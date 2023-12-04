@@ -2,6 +2,9 @@ import UserConst from '../consts/user.const.js'
 import GlobalUtils from '../utils/global.utils.js'
 import MongooseUtils from '../utils/mongoose.utils.js'
 import UserModel from './../models/User.model.js'
+import BookmarkModel from './../models/Bookmark.model.js'
+import FollowerModel from './../models/Follower.model.js'
+import FavouriteModel from './../models/Favourite.model.js'
 
 // Initialize Module
 const UserService = {}
@@ -56,7 +59,23 @@ UserService.find = async (reqQuery) => {
       .sort(sort)
       .skip(skip)
       .limit(limit)
+      .lean()
+
     const total = await UserModel.countDocuments(query)
+
+    // Add (bookmark, follower, favourite) count on output
+    for (let u of result) {
+      u.bookmarkCount = await BookmarkModel.countDocuments({
+        user: u.user,
+      })
+      u.followerCount = await FollowerModel.countDocuments({
+        creator: u.user,
+      })
+      u.favouriteCount = await FavouriteModel.countDocuments({
+        user: u.user,
+      })
+    }
+
     return { data: result, meta: { page, limit, total } }
   } catch (error) {
     throw error
