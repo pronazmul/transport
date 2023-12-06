@@ -63,4 +63,33 @@ FollowerService.followedByIds = async (id) => {
   }
 }
 
+FollowerService.followedByActivity = async (usersList) => {
+  try {
+    let result = await FollowerModel.find(
+      { user: { $in: usersList } },
+      '-_id user creator'
+    )
+      .populate({
+        path: 'user',
+        select: 'name avatar',
+      })
+      .populate({
+        path: 'creator',
+        select: 'name avatar',
+      })
+      .limit(5)
+      .lean()
+
+    if (result) {
+      result = result.map((r) => ({
+        message: `${r?.user?.name} followed by ${r?.creator?.name}`,
+        ...r,
+      }))
+    }
+    return result
+  } catch (error) {
+    throw error
+  }
+}
+
 export default FollowerService

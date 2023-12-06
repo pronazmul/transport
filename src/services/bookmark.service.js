@@ -37,4 +37,29 @@ BookmarkService.deleteOneById = async (id) => {
   }
 }
 
+BookmarkService.followedByActivity = async (usersList) => {
+  try {
+    let result = await BookmarkModel.find(
+      { user: { $in: usersList } },
+      '-_id user place'
+    )
+      .populate({
+        path: 'user',
+        select: 'name avatar',
+      })
+      .limit(5)
+      .lean()
+
+    if (result) {
+      result = result.map((r) => ({
+        message: `${r?.user?.name} bookmark a place`,
+        ...r,
+      }))
+    }
+    return result
+  } catch (error) {
+    throw error
+  }
+}
+
 export default BookmarkService

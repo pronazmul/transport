@@ -37,4 +37,29 @@ FavouriteService.deleteOneById = async (id) => {
   }
 }
 
+FavouriteService.followedByActivity = async (usersList) => {
+  try {
+    let result = await FavouriteModel.find(
+      { user: { $in: usersList } },
+      '-_id user place'
+    )
+      .populate({
+        path: 'user',
+        select: 'name avatar',
+      })
+      .limit(5)
+      .lean()
+
+    if (result) {
+      result = result.map((r) => ({
+        message: `${r?.user?.name} favourites a place`,
+        ...r,
+      }))
+    }
+    return result
+  } catch (error) {
+    throw error
+  }
+}
+
 export default FavouriteService

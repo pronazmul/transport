@@ -6,6 +6,7 @@ import PlaceRoutes from './place.route.js'
 import BookmarkRoute from './bookmark.route.js'
 import FavouriteRoute from './favourite.route.js'
 import ShareRoute from './share.route.js'
+import ActivityRoute from './activity.route.js'
 
 // Middleware
 import AuthMiddleware from '../middlewares/auth.middlewares.js'
@@ -23,6 +24,7 @@ router.use('/api/v1/places', AuthMiddleware.authenticate, PlaceRoutes)
 router.use('/api/v1/bookmarks', AuthMiddleware.authenticate, BookmarkRoute)
 router.use('/api/v1/favourites', AuthMiddleware.authenticate, FavouriteRoute)
 router.use('/api/v1/shares', AuthMiddleware.authenticate, ShareRoute)
+router.use('/api/v1/activities', AuthMiddleware.authenticate, ActivityRoute)
 
 // Module Exports
 export default router
