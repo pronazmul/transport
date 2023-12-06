@@ -34,17 +34,43 @@ UserService.findOneByUserName = async (email) => {
   }
 }
 
-UserService.findOneById = async (id) => {
+UserService.findOneById = async (id, auth) => {
   try {
     let query = { _id: id }
-    let user = await UserModel.findById(query, { password: 0 })
+    let user = await UserModel.findById(query, {
+      password: 0,
+      followers: 0,
+      following: 0,
+    }).lean()
+
+    if (user) {
+      user.bookmarkCount = await BookmarkModel.countDocuments({
+        user: user._id,
+      })
+      user.followerCount = await FollowerModel.countDocuments({
+        creator: user._id,
+      })
+      user.followingsCount = await FollowerModel.countDocuments({
+        user: user._id,
+      })
+      user.favouriteCount = await FavouriteModel.countDocuments({
+        user: user._id,
+      })
+      user.followed = Boolean(
+        await FollowerModel.countDocuments({
+          creator: auth?._id,
+          user: user._id,
+        })
+      )
+    }
+
     return user
   } catch (error) {
     throw error
   }
 }
 
-UserService.find = async (reqQuery) => {
+UserService.find = async (reqQuery, user) => {
   try {
     const { page, limit, skip, sortBy, sortOrder } =
       GlobalUtils.calculatePagination(reqQuery)
@@ -55,7 +81,11 @@ UserService.find = async (reqQuery) => {
       UserConst.filterOptions
     )
     const sort = { [sortBy]: sortOrder }
-    const result = await UserModel.find(query, { password: 0 })
+    const result = await UserModel.find(query, {
+      password: 0,
+      following: 0,
+      followers: 0,
+    })
       .sort(sort)
       .skip(skip)
       .limit(limit)
@@ -66,14 +96,20 @@ UserService.find = async (reqQuery) => {
     // Add (bookmark, follower, favourite) count on output
     for (let u of result) {
       u.bookmarkCount = await BookmarkModel.countDocuments({
-        user: u.user,
+        user: u._id,
       })
       u.followerCount = await FollowerModel.countDocuments({
-        creator: u.user,
+        creator: u._id,
       })
       u.favouriteCount = await FavouriteModel.countDocuments({
-        user: u.user,
+        user: u._id,
       })
+      u.followed = Boolean(
+        await FollowerModel.countDocuments({
+          creator: user?._id,
+          user: u._id,
+        })
+      )
     }
 
     return { data: result, meta: { page, limit, total } }

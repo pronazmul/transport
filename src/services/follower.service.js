@@ -7,23 +7,23 @@ const FollowerService = {}
 
 FollowerService.find = async (creatorId) => {
   try {
-    let result = await FollowerModel.find({ creator: creatorId })
+    let result = await FollowerModel.find({ user: creatorId })
       .populate({
-        path: 'user',
-        select: 'name email city country avatar followers following',
+        path: 'creator',
+        select: 'name email city country avatar',
       })
       .lean()
 
     // Add (bookmark, follower, favourite) count on output
     for (let u of result) {
-      u.bookmarkCount = await BookmarkModel.countDocuments({
-        user: u.user,
+      u.creator.bookmarkCount = await BookmarkModel.countDocuments({
+        user: u.creator._id,
       })
-      u.followerCount = await FollowerModel.countDocuments({
-        creator: u.user,
+      u.creator.followerCount = await FollowerModel.countDocuments({
+        creator: u.creator._id,
       })
-      u.favouriteCount = await FavouriteModel.countDocuments({
-        user: u.user,
+      u.creator.favouriteCount = await FavouriteModel.countDocuments({
+        user: u.creator._id,
       })
     }
 

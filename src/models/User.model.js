@@ -12,6 +12,7 @@ const UserSchema = Schema(
       unique: true,
       required: true,
     },
+    bio: String,
     password: { type: String },
     city: String,
     country: String,

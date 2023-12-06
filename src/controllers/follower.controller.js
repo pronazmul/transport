@@ -14,7 +14,7 @@ FollowerController.find = async (req, res, next) => {
     let result = await FollowerService.find(creatorId)
     let response = GlobalUtils.fromatResponse(
       result,
-      'All Followers Fetch Success'
+      'All Followings Fetch Success'
     )
     res.status(200).json(response)
   } catch (error) {

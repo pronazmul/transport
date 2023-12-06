@@ -48,7 +48,7 @@ FavouriteController.allFavourites = async (req, res, next) => {
 
     let response = GlobalUtils.fromatResponse(
       resultWithPlace,
-      'All Bookmark Fetch Success'
+      'All Favourites Fetch Success'
     )
     res.status(200).json(response)
   } catch (error) {
@@ -62,7 +62,7 @@ FavouriteController.addToFavourite = async (req, res, next) => {
     let userId = req.user._id
 
     let data = await FavouriteService.create(placeId, userId)
-    let response = GlobalUtils.fromatResponse(data, 'Add To Bookmark Success!')
+    let response = GlobalUtils.fromatResponse(data, 'Add To Favourite Success!')
     res.status(200).json(response)
   } catch (error) {
     next(createError(500, error))
@@ -72,7 +72,7 @@ FavouriteController.addToFavourite = async (req, res, next) => {
 FavouriteController.removeFromFavourite = async (req, res, next) => {
   try {
     let data = await FavouriteService.deleteOneById(req.params.id)
-    let response = GlobalUtils.fromatResponse(data, 'Bookmark Delete Success!')
+    let response = GlobalUtils.fromatResponse(data, 'Favourite Remove Success!')
     res.status(200).json(response)
   } catch (error) {
     next(createError(500, error))

@@ -8,11 +8,19 @@ const router = Router()
 
 /**
  * @description All Followers
- * @Route [GET]- /api/followers/:creatorId
+ * @Route [GET]- /api/followers/followings/:userId
  * @Access protected - []
  * @returns {Array} - All Followers Data
  */
 router.get('/:creatorId', FollowerController.find)
+
+// /**
+//  * @description All Followers
+//  * @Route [GET]- /api/followers/:creatorId
+//  * @Access protected - []
+//  * @returns {Array} - All Followers Data
+//  */
+// router.get('/:creatorId', FollowerController.find)
 
 /**
  * @description Follow User
