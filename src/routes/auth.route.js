@@ -1,10 +1,11 @@
 // External Modules:
 import { Router } from 'express'
-
 import UserSchema from '../schemas/user.schema.js'
 import AuthController from './../controllers/auth.controller.js'
 import AuthMiddleware from './../middlewares/auth.middlewares.js'
 import ValidateMiddleware from './../middlewares/validate.middleware.js'
+import FileMiddleware from '../middlewares/file.middlewares.js'
+import config from '../config/index.js'
 
 const router = Router()
 const { authenticate } = AuthMiddleware
@@ -18,6 +19,7 @@ const { validateRequest } = ValidateMiddleware
  */
 router.post(
   '/register',
+  FileMiddleware.localUpload(['image'], config.user_directory, 'avatar'),
   validateRequest(UserSchema.create),
   AuthController.register
 )
@@ -29,6 +31,14 @@ router.post(
  * @returns {Object} - Logged in User.
  */
 router.post('/login', validateRequest(UserSchema.login), AuthController.login)
+
+/**
+ * @description Get Loggedin User Profile
+ * @Route [POST]- /api/auth/profile
+ * @Access Public
+ * @returns {Object} - Logged in User.
+ */
+router.get('/profile', AuthMiddleware.authenticate, AuthController.profle)
 
 // Exports
 export default router

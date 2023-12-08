@@ -11,7 +11,7 @@ const { infoLogger } = LoggerUtils
 const app = express()
 
 // Databse Connection:
-DbConnection.connectMySQL()
+DbConnection.connectMongo()
 
 // Global Middlwares
 app.use(GlobalMiddlewares.middlewares)
@@ -26,6 +26,3 @@ app.use([GlobalMiddlewares.notFound, GlobalMiddlewares.error])
 app.listen(config.port, () =>
   infoLogger.info(`Server listening on port ${config.port}`)
 )
-
-// Cron Jobs (Will Run Each 5 Munites) package [node-cron]
-// cron.schedule('*/5 * * * *', processMethod)

@@ -1,40 +1,82 @@
-import { sequelize } from '../config/db.js'
-import { Sequelize, DataTypes } from 'sequelize'
-import { RoleModel } from './Role.model.js'
+// Required Packeges
+import { Schema, model, Types } from 'mongoose'
+import uniqueValidator from 'mongoose-unique-validator'
+import { hash } from 'bcrypt'
+import config from '../config/index.js'
 
-// Define the User model using Sequelize
-export const UserModel = sequelize.define('User', {
-  roleId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
+const UserSchema = Schema(
+  {
+    name: { type: String, required: true },
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+    },
+    bio: String,
+    password: { type: String },
+    city: String,
+    country: String,
+    avatar: { type: String },
+    followers: { type: Number, default: 0 },
+    following: { type: Number, default: 0 },
+    active: { type: Boolean, default: true },
   },
-  firstName: {
-    type: DataTypes.STRING,
-  },
-  lastName: {
-    type: DataTypes.STRING,
-  },
-  email: {
-    type: DataTypes.STRING,
-  },
-  password: {
-    type: DataTypes.STRING,
-  },
-  photo: {
-    type: DataTypes.STRING,
-  },
-  brith: {
-    type: DataTypes.DATE,
-  },
+  {
+    timestamps: true,
+    versionKey: false,
+  }
+)
+
+// Integrate MOngoose Unique Validoator Plugin
+UserSchema.plugin(uniqueValidator, {
+  message: '{VALUE} Already Exists!',
 })
 
-UserModel.belongsTo(RoleModel, { foreignKey: 'roleId' })
+// Pre-Middleware Function
+UserSchema.pre('save', async function (next) {
+  this.password = await hash(this.password, 10)
+})
 
-sequelize
-  .sync()
-  .then()
-  .catch((err) => {
-    console.error('Error syncing User table:', err)
-  })
+// Post-middleware function
+UserSchema.post(/^find|^findOne|^findById/, function (docs, next) {
+  // Check the response is object
+  if (typeof docs === 'object' && !Array.isArray(docs) && docs?.avatar) {
+    docs.avatar = `${config.server_url}/${config.user_directory}/${docs.avatar}`
+  }
 
+  // Check IF the response is object
+  if (Array.isArray(docs)) {
+    let transformedDocs = docs.map((item) => {
+      if (item?.avatar) {
+        item.avatar = `${config.server_url}/${config.user_directory}/${item.avatar}`
+      }
+      delete item.password
+      return item
+    })
+    docs = transformedDocs
+  }
+  next()
+})
+
+// Static Functions
+UserSchema.statics.incrementFollower = function (id) {
+  return this.findOneAndUpdate({ _id: id }, { $inc: { followers: 1 } })
+}
+
+UserSchema.statics.decrementFollower = function (id) {
+  return this.findOneAndUpdate({ _id: id }, { $inc: { followers: -1 } })
+}
+
+UserSchema.statics.incrementFollowing = function (id) {
+  return this.findOneAndUpdate({ _id: id }, { $inc: { following: 1 } })
+}
+
+UserSchema.statics.decrementFollowing = function (id) {
+  return this.findOneAndUpdate({ _id: id }, { $inc: { following: -1 } })
+}
+
+// Make User Model
+const UserModel = model('User', UserSchema)
+
+// Export User Model
 export default UserModel

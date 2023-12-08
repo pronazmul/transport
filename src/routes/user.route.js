@@ -6,6 +6,7 @@ import UserSchema from '../schemas/user.schema.js'
 import ValidateMiddleware from '../middlewares/validate.middleware.js'
 import UserController from './../controllers/user.controller.js'
 import FileMiddleware from '../middlewares/file.middlewares.js'
+import config from '../config/index.js'
 
 const router = Router()
 const { validateRequest } = ValidateMiddleware
@@ -34,7 +35,8 @@ router.get('/:id', UserController.getSingleUser)
  */
 router.put(
   '/:id',
-  validateRequest(UserSchema.update),
+  // validateRequest(UserSchema.update),
+  FileMiddleware.localUpload(['image'], config.user_directory, 'avatar'),
   UserController.updateUser
 )
 
@@ -44,11 +46,7 @@ router.put(
  * @Access protected - [admin]
  * @returns {Array} - All User Array.
  */
-router.get(
-  '/',
-  validateRequest(UserSchema.fetchAllUser),
-  UserController.allUsers
-)
+router.get('/', validateRequest(UserSchema.find), UserController.allUsers)
 
 // Exports
 export default router
