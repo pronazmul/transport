@@ -11,7 +11,7 @@ const { infoLogger } = LoggerUtils
 const app = express()
 
 // Databse Connection:
-DbConnection.connectMongo()
+DbConnection.connectMySQL()
 
 // Global Middlwares
 app.use(GlobalMiddlewares.middlewares)

@@ -13,6 +13,9 @@ AuthMiddleware.authenticate = async (req, res, next) => {
     if (!token) {
       return next(createError(401, 'Authentication Failed'))
     }
+    if (token.startsWith('Bearer ')) {
+      token = token.slice(7, token.length).trimLeft()
+    }
     const { decoded } = jwtDecode(token)
     req.user = decoded
     next()

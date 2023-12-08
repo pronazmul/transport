@@ -1,11 +1,28 @@
 import mongoose from 'mongoose'
 import config from './../config/index.js'
 import LoggerUtils from '../utils/logger.utils.js'
+import { Sequelize, DataTypes } from 'sequelize'
 
 const { errorLoger, infoLogger } = LoggerUtils
 
 // Initialize Module
 const DbConnection = {}
+
+// connect MySqL
+export const sequelize = new Sequelize('rental_car', 'root', '', {
+  host: 'localhost',
+  dialect: 'mysql',
+})
+
+DbConnection.connectMySQL = async () => {
+  try {
+    await sequelize.authenticate()
+    infoLogger.info(`MongoDB Successfully Connected with rental_car`)
+  } catch (error) {
+    console.error('Unable to connect to the database:', error)
+    process.exit(1)
+  }
+}
 
 // Connect MongoDB
 mongoose.set('strictQuery', true)

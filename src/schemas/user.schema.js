@@ -1,8 +1,7 @@
 import { object, string, date, ref, array, number } from 'yup'
 import GlobalConst from '../consts/global.const.js'
-import UserConst from './../consts/user.const.js'
 
-const { emailExp, passwordExp, numberExp } = GlobalConst.regexp
+const { emailExp, passwordExp } = GlobalConst.regexp
 
 // Initialize Module
 const UserSchema = {}
@@ -20,7 +19,9 @@ UserSchema.login = object()
 
 UserSchema.create = object()
   .shape({
-    name: string().required('Name is Required!'),
+    firstName: string().required('FirstName is Required!'),
+    lastName: string().required('LastName is Required!'),
+    brith: string().optional(),
     email: string()
       .matches(emailExp, 'Invalid Email Address!')
       .required('Email is Required!'),
@@ -30,8 +31,6 @@ UserSchema.create = object()
         'Password must be at least 8 characters long and contain letters, numbers, and special characters!'
       )
       .required('Password Is Required!'),
-    city: string().optional(),
-    country: string().optional(),
   })
   .strict()
 
@@ -46,27 +45,7 @@ UserSchema.update = object()
         passwordExp,
         'Password must be at least 8 characters long and contain letters, numbers, and special characters!'
       ),
+    brith: string().optional(),
   })
   .strict()
-
-UserSchema.find = object()
-  .shape({
-    search: string().typeError('Search Value Should be String!'),
-    page: string().optional().matches(numberExp, 'Invalid Page!'),
-    limit: string().optional().matches(numberExp, 'Invalid Limit!'),
-    sortOrder: string()
-      .optional()
-      .oneOf(['asc', 'desc'], 'Invalid sortOrder Value!'),
-    sortBy: string()
-      .optional()
-      .oneOf(UserConst.sortOptions, 'Invalid SortBy Value!'),
-
-    // filter Options
-    active: string()
-      .optional()
-      .oneOf(['true', 'false'], 'Invalid Active Value'),
-  })
-  .strict()
-  .noUnknown()
-
 export default UserSchema
