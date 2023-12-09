@@ -7,9 +7,9 @@ const FollowerService = {}
 
 FollowerService.find = async (creatorId) => {
   try {
-    let result = await FollowerModel.find({ user: creatorId })
+    let result = await FollowerModel.find({ creator: creatorId })
       .populate({
-        path: 'creator',
+        path: 'user',
         select: 'name bio email city country avatar',
       })
       .lean()
