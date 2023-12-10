@@ -5,14 +5,21 @@ import axios from 'axios'
 import GlobalUtils from '../utils/global.utils.js'
 import BookmarkService from './../services/bookmark.service.js'
 import FollowerService from '../services/follower.service.js'
+import FavouriteService from './../services/favourite.service.js'
 
 // Initialize Module
 const BookmarkController = {}
 
 BookmarkController.recommanded = async (req, res, next) => {
   try {
-    let followedBy = await FollowerService.followedByIds(req.params.userId)
+    let bookmarkIds = await BookmarkService.bookmarkedPlacesIdsByUser(
+      req?.user?._id
+    )
+    let favouriteIds = await FavouriteService.favouritePlacesIdsByUser(
+      req?.user?._id
+    )
 
+    let followedBy = await FollowerService.followedByIds(req.params.userId)
     let bookmarks = []
 
     for (let f of followedBy) {
@@ -39,6 +46,8 @@ BookmarkController.recommanded = async (req, res, next) => {
       let photos = await axios.request({ ...config, url: photoUrl })
 
       let formatted = {
+        isBookmarked: Boolean(bookmarkIds.find((b) => item?.place === b)),
+        isFavourite: Boolean(favouriteIds.find((b) => item?.place === b)),
         ...place.data,
         categories: place.data.categories.map((i) => ({
           ...i,
@@ -66,6 +75,13 @@ BookmarkController.recommanded = async (req, res, next) => {
 
 BookmarkController.allBookmarks = async (req, res, next) => {
   try {
+    let bookmarkIds = await BookmarkService.bookmarkedPlacesIdsByUser(
+      req?.user?._id
+    )
+    let favouriteIds = await FavouriteService.favouritePlacesIdsByUser(
+      req?.user?._id
+    )
+
     let userId = req.params.userId
     let result = await BookmarkService.find(userId)
 
@@ -88,6 +104,12 @@ BookmarkController.allBookmarks = async (req, res, next) => {
       let photos = await axios.request({ ...config, url: photoUrl })
 
       let formatted = {
+        isBookmarked: Boolean(
+          bookmarkIds.find((b) => place?.data?.fsq_id === b)
+        ),
+        isFavourite: Boolean(
+          favouriteIds.find((b) => place?.data?.fsq_id === b)
+        ),
         ...place.data,
         categories: place.data.categories.map((i) => ({
           ...i,
