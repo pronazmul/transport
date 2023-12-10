@@ -4,12 +4,21 @@ import axios from 'axios'
 
 // Internal Modules:
 import GlobalUtils from '../utils/global.utils.js'
+import BookmarkService from '../services/bookmark.service.js'
+import FavouriteService from '../services/favourite.service.js'
 
 // Initialize Module
 const PlaceController = {}
 
 PlaceController.allPlaces = async (req, res, next) => {
   try {
+    let bookmarkIds = await BookmarkService.bookmarkedPlacesIdsByUser(
+      req?.user?._id
+    )
+    let favouriteIds = await FavouriteService.favouritePlacesIdsByUser(
+      req?.user?._id
+    )
+
     let url = 'https://api.foursquare.com/v3/places/search'
 
     if (Object.entries(req.query)) {
@@ -32,6 +41,8 @@ PlaceController.allPlaces = async (req, res, next) => {
 
     // Format Cateogry Icon Response - https://ss3.4sqi.net/img/categories_v2/food/coffeeshop_88.png
     let formatted = result?.data?.results.map((item) => ({
+      isBookmarked: Boolean(bookmarkIds.find((b) => item?.fsq_id === b)),
+      isFavourite: Boolean(favouriteIds.find((b) => item?.fsq_id === b)),
       ...item,
       categories: item.categories.map((i) => ({
         ...i,
@@ -51,6 +62,13 @@ PlaceController.allPlaces = async (req, res, next) => {
 
 PlaceController.singlePlace = async (req, res, next) => {
   try {
+    let bookmarkIds = await BookmarkService.bookmarkedPlacesIdsByUser(
+      req?.user?._id
+    )
+    let favouriteIds = await FavouriteService.favouritePlacesIdsByUser(
+      req?.user?._id
+    )
+
     let placeUrl = `https://api.foursquare.com/v3/places/${req.params.id}`
     let photoUrl = `https://api.foursquare.com/v3/places/${req.params.id}/photos`
 
@@ -67,6 +85,8 @@ PlaceController.singlePlace = async (req, res, next) => {
     let photos = await axios.request({ ...config, url: photoUrl })
 
     let formatted = {
+      isBookmarked: Boolean(bookmarkIds.find((b) => place?.data?.fsq_id === b)),
+      isFavourite: Boolean(favouriteIds.find((b) => place?.data?.fsq_id === b)),
       ...place.data,
       categories: place.data.categories.map((i) => ({
         ...i,

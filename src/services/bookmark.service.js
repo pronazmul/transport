@@ -62,4 +62,15 @@ BookmarkService.followedByActivity = async (usersList) => {
   }
 }
 
+BookmarkService.bookmarkedPlacesIdsByUser = async (id) => {
+  try {
+    let query = { user: id }
+    let result = await BookmarkModel.find(query, '-_id place').lean()
+    if (result) result = result.map((r) => r.place)
+    return result
+  } catch (error) {
+    throw error
+  }
+}
+
 export default BookmarkService

@@ -5,28 +5,50 @@ import FavouriteModel from './../models/Favourite.model.js'
 // Initialize Module
 const FollowerService = {}
 
-FollowerService.find = async (creatorId) => {
+FollowerService.find = async (creatorId, type = 'followers') => {
   try {
-    let result = await FollowerModel.find({ creator: creatorId })
-      .populate({
-        path: 'user',
-        select: 'name bio email city country avatar',
-      })
-      .lean()
+    let result
+    if (type === 'followedBy') {
+      result = await FollowerModel.find({ user: creatorId })
+        .populate({
+          path: 'creator',
+          select: 'name bio email city country avatar',
+        })
+        .lean()
 
-    // Add (bookmark, follower, favourite) count on output
-    for (let u of result) {
-      u.creator.bookmarkCount = await BookmarkModel.countDocuments({
-        user: u.creator._id,
-      })
-      u.creator.followerCount = await FollowerModel.countDocuments({
-        creator: u.creator._id,
-      })
-      u.creator.favouriteCount = await FavouriteModel.countDocuments({
-        user: u.creator._id,
-      })
+      // Add (bookmark, follower, favourite) count on output
+      for (let u of result) {
+        u.creator.bookmarkCount = await BookmarkModel.countDocuments({
+          user: u.creator._id,
+        })
+        u.creator.followerCount = await FollowerModel.countDocuments({
+          creator: u.creator._id,
+        })
+        u.creator.favouriteCount = await FavouriteModel.countDocuments({
+          user: u.creator._id,
+        })
+      }
+    } else {
+      result = await FollowerModel.find({ creator: creatorId })
+        .populate({
+          path: 'user',
+          select: 'name bio email city country avatar',
+        })
+        .lean()
+
+      // Add (bookmark, follower, favourite) count on output
+      for (let u of result) {
+        u.user.bookmarkCount = await BookmarkModel.countDocuments({
+          user: u.user._id,
+        })
+        u.user.followerCount = await FollowerModel.countDocuments({
+          creator: u.user._id,
+        })
+        u.user.favouriteCount = await FavouriteModel.countDocuments({
+          user: u.user._id,
+        })
+      }
     }
-
     return result
   } catch (error) {
     throw error

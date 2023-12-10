@@ -11,7 +11,7 @@ const FollowerController = {}
 FollowerController.find = async (req, res, next) => {
   try {
     let creatorId = req.params.creatorId
-    let result = await FollowerService.find(creatorId)
+    let result = await FollowerService.find(creatorId, req?.query?.type)
     let response = GlobalUtils.fromatResponse(
       result,
       'All Followings Fetch Success'
@@ -21,7 +21,6 @@ FollowerController.find = async (req, res, next) => {
     next(createError(500, error))
   }
 }
-
 FollowerController.follow = async (req, res, next) => {
   try {
     let creatorId = req.params.creatorId
@@ -38,7 +37,6 @@ FollowerController.follow = async (req, res, next) => {
     next(createError(500, error))
   }
 }
-
 FollowerController.unfollow = async (req, res, next) => {
   try {
     let data = await FollowerService.deleteOneById(req.params.id)

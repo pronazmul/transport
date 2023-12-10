@@ -62,4 +62,15 @@ FavouriteService.followedByActivity = async (usersList) => {
   }
 }
 
+FavouriteService.favouritePlacesIdsByUser = async (id) => {
+  try {
+    let query = { user: id }
+    let result = await FavouriteModel.find(query, '-_id place').lean()
+    if (result) result = result.map((r) => r.place)
+    return result
+  } catch (error) {
+    throw error
+  }
+}
+
 export default FavouriteService
