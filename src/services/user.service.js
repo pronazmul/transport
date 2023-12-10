@@ -12,7 +12,6 @@ const UserService = {}
 UserService.create = async (payload) => {
   try {
     let NewData = new UserModel(payload)
-
     let data = await NewData.save()
     let query = { _id: NewData._id }
     data = await UserModel.findOne(query).lean()
@@ -57,8 +56,8 @@ UserService.findOneById = async (id, auth) => {
       })
       user.followed = Boolean(
         await FollowerModel.countDocuments({
-          creator: auth?._id,
-          user: user._id,
+          creator: user._id,
+          user: auth?._id,
         })
       )
     }
@@ -105,8 +104,8 @@ UserService.find = async (reqQuery, user) => {
       })
       u.followed = Boolean(
         await FollowerModel.countDocuments({
-          creator: user?._id,
-          user: u._id,
+          creator: u._id,
+          user: user?._id,
         })
       )
     }
@@ -121,7 +120,6 @@ UserService.updateOneById = async (id, payload) => {
   try {
     let query = { _id: id }
     let options = { new: true, select: { password: 0 } }
-    console.log({ id, payload })
     const result = await UserModel.findOneAndUpdate(query, payload, options)
     return result
   } catch (error) {

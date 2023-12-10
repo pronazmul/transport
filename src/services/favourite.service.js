@@ -19,6 +19,9 @@ FavouriteService.find = async (userId) => {
 
 FavouriteService.create = async (placeId, userId) => {
   try {
+    let exists = await FavouriteModel.findOne({ place: placeId, user: userId })
+    if (exists) throw new Error('Product Already Added To Favourite!')
+
     let newData = new FavouriteModel({ place: placeId, user: userId })
     let result = await newData.save()
     return result

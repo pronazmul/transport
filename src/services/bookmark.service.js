@@ -19,6 +19,9 @@ BookmarkService.find = async (userId) => {
 
 BookmarkService.create = async (placeId, userId) => {
   try {
+    let exists = await BookmarkModel.findOne({ place: placeId, user: userId })
+    if (exists) throw new Error('Product Already Added To Bookmark!')
+
     let newData = new BookmarkModel({ place: placeId, user: userId })
     let result = await newData.save()
     return result

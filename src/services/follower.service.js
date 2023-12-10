@@ -57,6 +57,12 @@ FollowerService.find = async (creatorId, type = 'followers') => {
 
 FollowerService.create = async (creatorId, userId) => {
   try {
+    let exists = await FollowerModel.findOne({
+      creator: creatorId,
+      user: userId,
+    })
+    if (exists) throw new Error('User Already Followed!')
+
     let newRole = new FollowerModel({ creator: creatorId, user: userId })
     let result = await newRole.save()
     return result
