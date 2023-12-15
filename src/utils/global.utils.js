@@ -66,11 +66,16 @@ GlobalUtils.calculatePagination = (options = {}) => {
  * @param {object} [meta={ page: 0, limit: 0, total: 0 }] - The metadata associated with the response (optional).
  * @returns {object} - The formatted response object.
  */
-GlobalUtils.fromatResponse = (data, message = 'Request Success!') => {
+GlobalUtils.fromatResponse = (
+  data,
+  message = 'Request Success!',
+  meta = {}
+) => {
   return {
     success: true,
     message,
     data: data,
+    meta,
   }
 }
 

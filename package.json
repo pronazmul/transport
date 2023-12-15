@@ -5,11 +5,9 @@
   "type": "module",
   "main": "app.js",
   "scripts": {
-    "start": "NODE_ENV=production node app.js",
-    "dev": "NODE_ENV=development nodemon app.js",
+    "start": "nodemon app.js",
     "data:import": "node src/config/seeder",
-    "data:destroy": "node src/config/seeder -d",
-    "data:test": "node _temp"
+    "data:destroy": "node src/config/seeder -d"
   },
   "author": "Nazmul Huda",
   "license": "ISC",
@@ -30,9 +28,7 @@
     "mongoose-unique-validator": "^3.0.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.4",
-    "mysql2": "^3.6.2",
     "node-device-detector": "^2.0.8",
-    "sequelize": "^6.33.0",
     "sharp": "^0.30.3",
     "winston": "^3.9.0",
     "winston-daily-rotate-file": "^4.7.1",
