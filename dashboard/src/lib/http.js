@@ -23,6 +23,10 @@ export async function register(payload) {
   return await handleResponse(response)
 }
 
+// export async function logout() {
+//   const response = await fetch(`http://localhost:8001/notes/${id}`, { signal })
+//   return await handleResponse(response)
+// }
 
 export async function allUsers() {
   const response = await fetch(`${baseUrl}/users`)
