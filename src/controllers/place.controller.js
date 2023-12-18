@@ -6,6 +6,8 @@ import axios from 'axios'
 import GlobalUtils from '../utils/global.utils.js'
 import BookmarkService from '../services/bookmark.service.js'
 import FavouriteService from '../services/favourite.service.js'
+import BookmarkModel from '../models/Bookmark.model.js'
+import FavouriteModel from '../models/Favourite.model.js'
 
 // Initialize Module
 const PlaceController = {}
@@ -50,8 +52,23 @@ PlaceController.allPlaces = async (req, res, next) => {
       })),
     }))
 
+    let formattedWithCount = []
+
+    for (let item of formatted) {
+      let newItem = {
+        bookmarkCount: await BookmarkModel.countDocuments({
+          place: item?.fsq_id,
+        }),
+        favouriteCount: await FavouriteModel.countDocuments({
+          place: item?.fsq_id,
+        }),
+        ...item,
+      }
+      formattedWithCount.push(newItem)
+    }
+
     let response = GlobalUtils.fromatResponse(
-      formatted,
+      formattedWithCount,
       'All Places Fetch Success'
     )
     res.status(200).json(response)
@@ -87,6 +104,12 @@ PlaceController.singlePlace = async (req, res, next) => {
     let formatted = {
       isBookmarked: Boolean(bookmarkIds.find((b) => place?.data?.fsq_id === b)),
       isFavourite: Boolean(favouriteIds.find((b) => place?.data?.fsq_id === b)),
+      bookmarkCount: await BookmarkModel.countDocuments({
+        place: place?.data?.fsq_id,
+      }),
+      favouriteCount: await FavouriteModel.countDocuments({
+        place: place?.data?.fsq_id,
+      }),
       ...place.data,
       categories: place.data.categories.map((i) => ({
         ...i,

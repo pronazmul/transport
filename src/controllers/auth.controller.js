@@ -37,9 +37,10 @@ AuthController.register = async (req, res, next) => {
 AuthController.login = async (req, res, next) => {
   try {
     let { email, password } = req.body
-    let user = await UserService.findOneByUserName(email)
+    let user = await UserService.findOneByUserName(
+      new String(email).toLocaleLowerCase()
+    )
     // Check Password
-
     let match = await compare(password, user?.password)
     if (!user || !match) throw createHttpError(401, 'Authentication Failed!')
     delete user?.password

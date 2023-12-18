@@ -6,6 +6,8 @@ import GlobalUtils from '../utils/global.utils.js'
 import BookmarkService from './../services/bookmark.service.js'
 import FollowerService from '../services/follower.service.js'
 import FavouriteService from './../services/favourite.service.js'
+import BookmarkModel from '../models/Bookmark.model.js'
+import FavouriteModel from '../models/Favourite.model.js'
 
 // Initialize Module
 const BookmarkController = {}
@@ -20,11 +22,14 @@ BookmarkController.recommanded = async (req, res, next) => {
     )
 
     let followedBy = await FollowerService.followedByIds(req.params.userId)
+
     let bookmarks = []
 
     for (let f of followedBy) {
-      let result = await BookmarkService.find(f?.creator)
-      bookmarks = [...bookmarks, ...result]
+      if (bookmarks?.length <= 10) {
+        let result = await BookmarkService.find(f?.creator)
+        bookmarks = [...bookmarks, ...result]
+      }
     }
 
     // Genereate Place & Photos
@@ -45,7 +50,19 @@ BookmarkController.recommanded = async (req, res, next) => {
       let place = await axios.request(config)
       let photos = await axios.request({ ...config, url: photoUrl })
 
+      let bookmarkCount = await BookmarkModel.countDocuments({
+        place: item?.place,
+      })
+
+      let favouriteCount = await FavouriteModel.countDocuments({
+        place: item?.place,
+      })
+      // let bookmarkCount = 0
+      // let favouriteCount = 0
+
       let formatted = {
+        bookmarkCount,
+        favouriteCount,
         isBookmarked: Boolean(bookmarkIds.find((b) => item?.place === b)),
         isFavourite: Boolean(favouriteIds.find((b) => item?.place === b)),
         ...place.data,
@@ -66,8 +83,6 @@ BookmarkController.recommanded = async (req, res, next) => {
       'All Bookmark Fetch Success'
     )
     res.status(200).json(response)
-
-    res.status(200).json(bookmarks)
   } catch (error) {
     next(createError(500, error))
   }
@@ -103,7 +118,17 @@ BookmarkController.allBookmarks = async (req, res, next) => {
       let place = await axios.request(config)
       let photos = await axios.request({ ...config, url: photoUrl })
 
+      let bookmarkCount = await BookmarkModel.countDocuments({
+        place: item?.place,
+      })
+
+      let favouriteCount = await FavouriteModel.countDocuments({
+        place: item?.place,
+      })
+
       let formatted = {
+        bookmarkCount,
+        favouriteCount,
         isBookmarked: Boolean(
           bookmarkIds.find((b) => place?.data?.fsq_id === b)
         ),

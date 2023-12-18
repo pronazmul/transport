@@ -71,10 +71,11 @@ FollowerService.create = async (creatorId, userId) => {
   }
 }
 
-FollowerService.deleteOneById = async (id) => {
+FollowerService.deleteOneById = async (creator, user) => {
+  console.log({ creator, user })
   try {
-    let query = { _id: id }
-    let result = await FollowerModel.findByIdAndDelete(query)
+    let query = { creator: creator, user: user }
+    let result = await FollowerModel.findOneAndDelete(query)
     return result
   } catch (error) {
     throw error

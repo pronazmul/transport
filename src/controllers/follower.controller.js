@@ -39,7 +39,7 @@ FollowerController.follow = async (req, res, next) => {
 }
 FollowerController.unfollow = async (req, res, next) => {
   try {
-    let data = await FollowerService.deleteOneById(req.params.id)
+    let data = await FollowerService.deleteOneById(req.params.id, req.user._id)
     let response = GlobalUtils.fromatResponse(data, 'Followers Delete Success!')
     res.status(200).json(response)
   } catch (error) {
