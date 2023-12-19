@@ -48,7 +48,7 @@ UserService.findOneById = async (id, auth) => {
       user.followerCount = await FollowerModel.countDocuments({
         creator: user._id,
       })
-      user.followingsCount = await FollowerModel.countDocuments({
+      user.followingCount = await FollowerModel.countDocuments({
         user: user._id,
       })
       user.favouriteCount = await FavouriteModel.countDocuments({
