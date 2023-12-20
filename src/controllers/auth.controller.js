@@ -12,6 +12,10 @@ AuthController.register = async (req, res, next) => {
   try {
     let data = { ...req.body }
 
+    if (data?.email) {
+      data = { ...data, email: new String(data.email).toLocaleLowerCase() }
+    }
+
     if (req?.files?.length) {
       data = { ...data, avatar: req.files[0].filename }
     }
