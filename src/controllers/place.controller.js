@@ -30,6 +30,8 @@ PlaceController.allPlaces = async (req, res, next) => {
       url = `${url}?${queryParams}`
     }
 
+    console.log({ url })
+
     let config = {
       method: 'get',
       maxBodyLength: Infinity,
@@ -73,6 +75,7 @@ PlaceController.allPlaces = async (req, res, next) => {
     )
     res.status(200).json(response)
   } catch (error) {
+    console.log({ error })
     next(createError(500, error))
   }
 }
