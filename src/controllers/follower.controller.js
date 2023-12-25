@@ -11,7 +11,11 @@ const FollowerController = {}
 FollowerController.find = async (req, res, next) => {
   try {
     let creatorId = req.params.creatorId
-    let result = await FollowerService.find(creatorId, req?.query?.type)
+    let result = await FollowerService.find(
+      creatorId,
+      req?.query?.type,
+      req?.user
+    )
     let response = GlobalUtils.fromatResponse(
       result,
       'All Followings Fetch Success'

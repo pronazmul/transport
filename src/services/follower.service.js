@@ -5,7 +5,7 @@ import FavouriteModel from './../models/Favourite.model.js'
 // Initialize Module
 const FollowerService = {}
 
-FollowerService.find = async (creatorId, type = 'followers') => {
+FollowerService.find = async (creatorId, type = 'followers', auth) => {
   try {
     let result
     if (type === 'followedBy') {
@@ -27,6 +27,12 @@ FollowerService.find = async (creatorId, type = 'followers') => {
         u.creator.favouriteCount = await FavouriteModel.countDocuments({
           user: u.creator._id,
         })
+        u.creator.followed = Boolean(
+          await FollowerModel.countDocuments({
+            creator: u.creator._id,
+            user: auth?._id,
+          })
+        )
       }
     } else {
       result = await FollowerModel.find({ creator: creatorId })
@@ -47,6 +53,12 @@ FollowerService.find = async (creatorId, type = 'followers') => {
         u.user.favouriteCount = await FavouriteModel.countDocuments({
           user: u.user._id,
         })
+        u.user.followed = Boolean(
+          await FollowerModel.countDocuments({
+            creator: u.user._id,
+            user: auth?._id,
+          })
+        )
       }
     }
     return result
