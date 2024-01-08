@@ -11,9 +11,10 @@ NoteService.find = async (placeId, followings) => {
     })
       .populate({
         path: 'user',
-        select: 'name bio email city country avatar followers following',
+        select: '_id',
       })
       .lean()
+
     return result
   } catch (error) {
     throw error

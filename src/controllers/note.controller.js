@@ -5,6 +5,7 @@ import createError from 'http-errors'
 import GlobalUtils from '../utils/global.utils.js'
 import FollowerService from '../services/follower.service.js'
 import NoteService from '../services/note.service.js'
+import UserService from '../services/user.service.js'
 
 // Initialize Module
 const NoteController = {}
@@ -17,10 +18,24 @@ NoteController.allNotes = async (req, res, next) => {
 
     if (followings) {
       followings = followings.map((f) => f.creator)
+      followings.push(req?.user?._id)
     }
 
     let result = await NoteService.find(placeId, followings)
-    let response = GlobalUtils.fromatResponse(result, 'All Notes Fetch Success')
+
+    const formattedResponse = []
+
+    for (let note of result) {
+      formattedResponse.push({
+        ...note,
+        user: await UserService.findOneById(note?.user?._id, req?.user),
+      })
+    }
+
+    let response = GlobalUtils.fromatResponse(
+      formattedResponse,
+      'All Notes Fetch Success'
+    )
     res.status(200).json(response)
   } catch (error) {
     next(createError(500, error))
