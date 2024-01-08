@@ -1,4 +1,4 @@
-import { object, string, date, ref, array, number } from 'yup'
+import { object, string } from 'yup'
 import GlobalConst from '../consts/global.const.js'
 import UserConst from './../consts/user.const.js'
 

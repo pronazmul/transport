@@ -1,6 +1,5 @@
 // External Modules:
 import createError from 'http-errors'
-import axios from 'axios'
 // Internal Modules:
 import GlobalUtils from '../utils/global.utils.js'
 import BookmarkService from './../services/bookmark.service.js'
@@ -8,6 +7,7 @@ import FollowerService from '../services/follower.service.js'
 import FavouriteService from './../services/favourite.service.js'
 import BookmarkModel from '../models/Bookmark.model.js'
 import FavouriteModel from '../models/Favourite.model.js'
+import FourSquareUtils from '../utils/fourSquare.utils.js'
 
 // Initialize Module
 const BookmarkController = {}
@@ -32,24 +32,9 @@ BookmarkController.recommanded = async (req, res, next) => {
       }
     }
 
-    // Genereate Place & Photos
     let resultWithPlace = []
 
     for (let item of bookmarks) {
-      let placeUrl = `https://api.foursquare.com/v3/places/${item.place}`
-      let photoUrl = `https://api.foursquare.com/v3/places/${item.place}/photos`
-      let config = {
-        method: 'get',
-        maxBodyLength: Infinity,
-        url: placeUrl,
-        headers: {
-          Authorization: 'fsq3QRDH6+eS3mEOmdIVepT5DNWmmvfPQSbkXTpk6nx2PLc=',
-        },
-      }
-
-      let place = await axios.request(config)
-      let photos = await axios.request({ ...config, url: photoUrl })
-
       let bookmarkCount = await BookmarkModel.countDocuments({
         place: item?.place,
       })
@@ -57,22 +42,15 @@ BookmarkController.recommanded = async (req, res, next) => {
       let favouriteCount = await FavouriteModel.countDocuments({
         place: item?.place,
       })
-      // let bookmarkCount = 0
-      // let favouriteCount = 0
+
+      let place = await FourSquareUtils.singlePlaceById(item?.place)
 
       let formatted = {
         bookmarkCount,
         favouriteCount,
         isBookmarked: Boolean(bookmarkIds.find((b) => item?.place === b)),
         isFavourite: Boolean(favouriteIds.find((b) => item?.place === b)),
-        ...place.data,
-        categories: place.data.categories.map((i) => ({
-          ...i,
-          icon: `${i.icon.prefix}88${i.icon.suffix}`,
-        })),
-        photos: photos.data.map(
-          (item) => `${item.prefix}${item.height}x${item.width}${item.suffix}`
-        ),
+        ...place,
       }
 
       resultWithPlace.push({ ...item, place: formatted })
@@ -104,19 +82,7 @@ BookmarkController.allBookmarks = async (req, res, next) => {
     let resultWithPlace = []
 
     for (let item of result) {
-      let placeUrl = `https://api.foursquare.com/v3/places/${item.place}`
-      let photoUrl = `https://api.foursquare.com/v3/places/${item.place}/photos`
-      let config = {
-        method: 'get',
-        maxBodyLength: Infinity,
-        url: placeUrl,
-        headers: {
-          Authorization: 'fsq3QRDH6+eS3mEOmdIVepT5DNWmmvfPQSbkXTpk6nx2PLc=',
-        },
-      }
-
-      let place = await axios.request(config)
-      let photos = await axios.request({ ...config, url: photoUrl })
+      let place = await FourSquareUtils.singlePlaceById(item?.place)
 
       let bookmarkCount = await BookmarkModel.countDocuments({
         place: item?.place,
@@ -129,22 +95,10 @@ BookmarkController.allBookmarks = async (req, res, next) => {
       let formatted = {
         bookmarkCount,
         favouriteCount,
-        isBookmarked: Boolean(
-          bookmarkIds.find((b) => place?.data?.fsq_id === b)
-        ),
-        isFavourite: Boolean(
-          favouriteIds.find((b) => place?.data?.fsq_id === b)
-        ),
-        ...place.data,
-        categories: place.data.categories.map((i) => ({
-          ...i,
-          icon: `${i.icon.prefix}88${i.icon.suffix}`,
-        })),
-        photos: photos.data.map(
-          (item) => `${item.prefix}${item.height}x${item.width}${item.suffix}`
-        ),
+        isBookmarked: Boolean(bookmarkIds.find((b) => item?.place === b)),
+        isFavourite: Boolean(favouriteIds.find((b) => item?.place === b)),
+        ...place,
       }
-
       resultWithPlace.push({ ...item, place: formatted })
     }
 

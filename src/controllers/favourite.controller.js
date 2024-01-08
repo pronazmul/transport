@@ -6,6 +6,7 @@ import axios from 'axios'
 import GlobalUtils from '../utils/global.utils.js'
 import FavouriteService from './../services/favourite.service.js'
 import BookmarkService from './../services/bookmark.service.js'
+import FourSquareUtils from '../utils/fourSquare.utils.js'
 
 // Initialize Module
 const FavouriteController = {}
@@ -26,35 +27,12 @@ FavouriteController.allFavourites = async (req, res, next) => {
     let resultWithPlace = []
 
     for (let item of result) {
-      let placeUrl = `https://api.foursquare.com/v3/places/${item.place}`
-      let photoUrl = `https://api.foursquare.com/v3/places/${item.place}/photos`
-      let config = {
-        method: 'get',
-        maxBodyLength: Infinity,
-        url: placeUrl,
-        headers: {
-          Authorization: 'fsq3QRDH6+eS3mEOmdIVepT5DNWmmvfPQSbkXTpk6nx2PLc=',
-        },
-      }
-
-      let place = await axios.request(config)
-      let photos = await axios.request({ ...config, url: photoUrl })
+      let place = await FourSquareUtils.singlePlaceById(item?.place)
 
       let formatted = {
-        isBookmarked: Boolean(
-          bookmarkIds.find((b) => place?.data?.fsq_id === b)
-        ),
-        isFavourite: Boolean(
-          favouriteIds.find((b) => place?.data?.fsq_id === b)
-        ),
-        ...place.data,
-        categories: place.data.categories.map((i) => ({
-          ...i,
-          icon: `${i.icon.prefix}88${i.icon.suffix}`,
-        })),
-        photos: photos.data.map(
-          (item) => `${item.prefix}${item.height}x${item.width}${item.suffix}`
-        ),
+        isBookmarked: Boolean(bookmarkIds.find((b) => item?.place === b)),
+        isFavourite: Boolean(favouriteIds.find((b) => item?.place === b)),
+        ...place,
       }
 
       resultWithPlace.push({ ...item, place: formatted })

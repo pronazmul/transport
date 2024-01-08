@@ -1,5 +1,3 @@
-import axios from 'axios'
-// -----------
 import { Router } from 'express'
 import AuthRoutes from './auth.route.js'
 import UserRoutes from './user.route.js'
@@ -17,47 +15,6 @@ const router = Router()
 
 //Health Checker
 router.use('/health', (_req, res) => res.status(200).json({ status: 'ok' }))
-router.use('/test', (_req, res) => {
-  // Places API
-  const placesUrl = 'https://api.foursquare.com/v3/places/search'
-  const placesConfig = {
-    method: 'get',
-    maxBodyLength: Infinity,
-    url: placesUrl,
-    headers: {
-      Authorization: 'fsq3QRDH6+eS3mEOmdIVepT5DNWmmvfPQSbkXTpk6nx2PLc=',
-    },
-  }
-
-  // Venues API
-  const venuesUrl = 'https://api.foursquare.com/v3/venues/search'
-  const venuesConfig = {
-    method: 'get',
-    url: `${venuesUrl}?v=20230101`,
-    headers: {
-      Authorization: 'fsq3QRDH6+eS3mEOmdIVepT5DNWmmvfPQSbkXTpk6nx2PLc=',
-      accept: 'application/json',
-    },
-  }
-
-//   axios
-//     .request(placesConfig)
-//     .then(function (response) {
-//       res.status(200).json(response.data)
-//     })
-//     .catch(function (error) {
-//       res.status(500).json(error)
-//     })
-
-  axios
-    .request(venuesConfig)
-    .then(function (response) {
-      res.status(200).json(response.data)
-    })
-    .catch(function (error) {
-      res.status(500).json(error)
-    })
-})
 
 // Application Routes
 router.use('/api/v1/auth', AuthRoutes)
