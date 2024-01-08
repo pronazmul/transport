@@ -2,16 +2,11 @@ import createHttpError from 'http-errors'
 import config from './../config/index.js'
 import axios from 'axios'
 import GlobalUtils from './global.utils.js'
+import FourSquareConst from '../consts/fourSquare.const.js'
 
 // Initiazlize Object
 const FourSquareUtils = {}
 
-/**
- * Create Query String from req.Query Object
- * @param {string} - Rquest URL
- * @param {object} [query={ radius: 5000, categories: 13000, limit:20}] - Key Value Pair Like Object
- * @returns {string} - http://abcd.com?radius=5000&categories=13000&limit=20
- */
 FourSquareUtils.reqConfig = (url = '') => {
   return {
     method: 'get',
@@ -23,8 +18,15 @@ FourSquareUtils.reqConfig = (url = '') => {
   }
 }
 
+FourSquareUtils.categoriesIdGenerator = (categoryString) => {
+  return categoryString
+    .split(',')
+    .map((c) => FourSquareConst.categories[c.trim()])
+    .join(',')
+}
+
 // Format Cateogry Icon Response - https://ss3.4sqi.net/img/categories_v2/food/coffeeshop_88.png
-FourSquareUtils.categoriesMaker = (categories) => {
+FourSquareUtils.categoriesIconMaker = (categories) => {
   return categories.map((i) => ({
     ...i,
     icon: `${i.icon.prefix}88${i.icon.suffix}`,
@@ -52,16 +54,23 @@ FourSquareUtils.searchPlaces = async (query) => {
   try {
     let url = 'https://api.foursquare.com/v3/places/search'
 
+    // format Category Ids
+    if (query?.categories) {
+      query.categories = FourSquareUtils.categoriesIdGenerator(query.categories)
+    }
+
+    // format Url using Queries
     if (Object.entries(query)) {
       url = GlobalUtils.createQueryParams(url, query)
     }
+
     let result = await axios.request(FourSquareUtils.reqConfig(url))
 
     let formatted = []
 
     for (let item of result?.data?.results) {
       let newItem = {
-        categories: FourSquareUtils.categoriesMaker(item.categories),
+        categories: FourSquareUtils.categoriesIconMaker(item.categories),
         ...item,
         photos: await FourSquareUtils.loadPhotosByPlaceId(item?.fsq_id),
       }
@@ -80,7 +89,7 @@ FourSquareUtils.singlePlaceById = async (id) => {
     let result = await axios.request(FourSquareUtils.reqConfig(url))
 
     let formatted = {
-      categories: FourSquareUtils.categoriesMaker(result?.data?.categories),
+      categories: FourSquareUtils.categoriesIconMaker(result?.data?.categories),
       ...result?.data,
       photos: await FourSquareUtils.loadPhotosByPlaceId(result?.data?.fsq_id),
     }
@@ -91,4 +100,5 @@ FourSquareUtils.singlePlaceById = async (id) => {
     throw createHttpError(500, 'Failed to Load Photos!')
   }
 }
+
 export default FourSquareUtils
