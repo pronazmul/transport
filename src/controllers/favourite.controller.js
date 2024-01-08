@@ -1,6 +1,5 @@
 // External Modules:
 import createError from 'http-errors'
-import axios from 'axios'
 
 // Internal Modules:
 import GlobalUtils from '../utils/global.utils.js'

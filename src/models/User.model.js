@@ -1,5 +1,5 @@
 // Required Packeges
-import { Schema, model, Types } from 'mongoose'
+import { Schema, model } from 'mongoose'
 import uniqueValidator from 'mongoose-unique-validator'
 import { hash } from 'bcrypt'
 import config from '../config/index.js'

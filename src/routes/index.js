@@ -5,6 +5,7 @@ import FollowerRoutes from './follower.route.js'
 import PlaceRoutes from './place.route.js'
 import BookmarkRoute from './bookmark.route.js'
 import FavouriteRoute from './favourite.route.js'
+import NoteRoute from './note.route.js'
 import ShareRoute from './share.route.js'
 import ActivityRoute from './activity.route.js'
 
@@ -23,6 +24,7 @@ router.use('/api/v1/followers', AuthMiddleware.authenticate, FollowerRoutes)
 router.use('/api/v1/places', AuthMiddleware.authenticate, PlaceRoutes)
 router.use('/api/v1/bookmarks', AuthMiddleware.authenticate, BookmarkRoute)
 router.use('/api/v1/favourites', AuthMiddleware.authenticate, FavouriteRoute)
+router.use('/api/v1/notes', AuthMiddleware.authenticate, NoteRoute)
 router.use('/api/v1/shares', AuthMiddleware.authenticate, ShareRoute)
 router.use('/api/v1/activities', AuthMiddleware.authenticate, ActivityRoute)
 
