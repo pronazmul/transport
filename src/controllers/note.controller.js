@@ -24,12 +24,21 @@ NoteController.allNotes = async (req, res, next) => {
     let result = await NoteService.find(placeId, followings)
 
     const formattedResponse = []
-
     for (let note of result) {
       formattedResponse.push({
         ...note,
         user: await UserService.findOneById(note?.user?._id, req?.user),
       })
+    }
+
+    // Shift Logged in User First Of the Response
+    let currentUserNote = formattedResponse?.findIndex(
+      (r) => JSON.stringify(r?.user?._id).split('"')[1] === req?.user?._id
+    )
+
+    if (currentUserNote > 0) {
+      let placeToBeShifted = formattedResponse.splice(currentUserNote, 1)
+      formattedResponse.unshift(...placeToBeShifted)
     }
 
     let response = GlobalUtils.fromatResponse(
