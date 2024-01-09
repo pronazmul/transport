@@ -45,8 +45,9 @@ FourSquareUtils.loadPhotosByPlaceId = async (placeId) => {
     let photos = await axios.request(FourSquareUtils.reqConfig(photoUrl))
     return FourSquareUtils.photosMaker(photos.data)
   } catch (error) {
-    console.log({ error })
-    throw createHttpError(500, 'Failed to Load Photos!')
+    return []
+    // console.log({ error })
+    // throw createHttpError(500, 'Failed to Load Photos!')
   }
 }
 

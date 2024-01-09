@@ -6,16 +6,6 @@
     "auditLog": "I:\\Fiverr_Marketplace\\USA\\Dsimson\\four-square-api\\logs\\successes\\.17277bb7948e084b2a2eb23f7b85e4015a37ebdc-audit.json",
     "files": [
         {
-            "date": 1704642529354,
-            "name": "I:\\Fiverr_Marketplace\\USA\\Dsimson\\four-square-api\\logs\\successes\\2024-07-01-21-success.log",
-            "hash": "197a9bb5d0509b784b5e317839ba2db55e336e664d1794983ec041e0a58f957f"
-        },
-        {
-            "date": 1704643217453,
-            "name": "I:\\Fiverr_Marketplace\\USA\\Dsimson\\four-square-api\\logs\\successes\\2024-07-01-22-success.log",
-            "hash": "0fa96a53e5f35dbe953bcf9c5f28b8863279fcb15c0a6b64d2145a743aca00c7"
-        },
-        {
             "date": 1704647316663,
             "name": "I:\\Fiverr_Marketplace\\USA\\Dsimson\\four-square-api\\logs\\successes\\2024-07-01-23-success.log",
             "hash": "5f5cdcb5b523659eb8626ecfda0e14be0926bc75d77c3661d973a5770a70f830"
@@ -59,6 +49,11 @@
             "date": 1704812419898,
             "name": "I:\\Fiverr_Marketplace\\USA\\Dsimson\\four-square-api\\logs\\successes\\2024-09-01-21-success.log",
             "hash": "8e49704d394b1d595eec6041f4191b3cd53c3f5a7cb937d2720f14f1353f60ff"
+        },
+        {
+            "date": 1704816497416,
+            "name": "I:\\Fiverr_Marketplace\\USA\\Dsimson\\four-square-api\\logs\\successes\\2024-09-01-22-success.log",
+            "hash": "a0ffa44929ea943d037e3ce7b9088700618adbb886da49478e9269a2e761df17"
         }
     ],
     "hashType": "sha256"
