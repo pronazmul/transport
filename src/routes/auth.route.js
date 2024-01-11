@@ -1,15 +1,36 @@
 // External Modules:
 import { Router } from 'express'
+
 import UserSchema from '../schemas/user.schema.js'
 import AuthController from './../controllers/auth.controller.js'
 import AuthMiddleware from './../middlewares/auth.middlewares.js'
 import ValidateMiddleware from './../middlewares/validate.middleware.js'
-import FileMiddleware from '../middlewares/file.middlewares.js'
-import config from '../config/index.js'
+import SessionSchema from '../schemas/session.schema.js'
 
 const router = Router()
 const { authenticate } = AuthMiddleware
 const { validateRequest } = ValidateMiddleware
+
+/**
+ * @description Retrive All Logged In user's Sessions
+ * @Route [GET]- /api/auth/sessions/:userId
+ * @Access Public
+ * @returns {Array} - All Active Session
+ */
+router.get(
+  '/sessions/:userId',
+  authenticate,
+  validateRequest(SessionSchema.fetchAll),
+  AuthController.activeSessions
+)
+
+/**
+ * @description Deactive Session by Sessin Id
+ * @Route [PUT]- /api/auth/sessions/:sessionId
+ * @Access Public
+ * @returns {Object} - Deactivate Session Details
+ */
+router.put('/sessions/:sessionId', authenticate, AuthController.deactiveSession)
 
 /**
  * @description Register A New User
@@ -19,7 +40,6 @@ const { validateRequest } = ValidateMiddleware
  */
 router.post(
   '/register',
-  FileMiddleware.localUpload(['image'], config.user_directory, 'avatar'),
   validateRequest(UserSchema.create),
   AuthController.register
 )
@@ -33,12 +53,20 @@ router.post(
 router.post('/login', validateRequest(UserSchema.login), AuthController.login)
 
 /**
- * @description Get Loggedin User Profile
- * @Route [POST]- /api/auth/profile
- * @Access Public
- * @returns {Object} - Logged in User.
+ * @description Logout User
+ * @Route [POST]- /api/users/auth/logout
+ * @Access Private
+ * @returns {Object} - logout
  */
-router.get('/profile', AuthMiddleware.authenticate, AuthController.profle)
+router.get('/logout', authenticate, AuthController.logout)
+
+/**
+ * @description Retrive Logged User Information
+ * @Route [GET]- /api/auth/login_info
+ * @Access Public
+ * @returns {Object} - Logged in User Data
+ */
+router.get('/login_info', authenticate, AuthController.loggedInInfo)
 
 // Exports
 export default router

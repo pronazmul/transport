@@ -74,23 +74,9 @@ GlobalUtils.fromatResponse = (
   return {
     success: true,
     message,
-    data: data,
     meta,
+    data: data,
   }
-}
-
-/**
- * Create Query String from req.Query Object
- * @param {string} - Rquest URL
- * @param {object} [query={ radius: 5000, categories: 13000, limit:20}] - Key Value Pair Like Object
- * @returns {string} - http://abcd.com?radius=5000&categories=13000&limit=20
- */
-GlobalUtils.createQueryParams = (url = '', query = {}) => {
-  let queryParams = Object.entries(query)
-    .map((i) => i.join('='))
-    .join('&')
-
-  return `${url}?${queryParams}`
 }
 
 export default GlobalUtils
