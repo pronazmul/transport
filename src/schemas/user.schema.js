@@ -1,8 +1,8 @@
-import { object, string, ref } from 'yup'
+import { object, string } from 'yup'
 import GlobalConst from '../consts/global.const.js'
-import UserConst from '../consts/user.const.js'
+import UserConst from './../consts/user.const.js'
 
-const { emailExp, passwordExp, alphabetExp, numberExp } = GlobalConst.regexp
+const { emailExp, passwordExp, numberExp } = GlobalConst.regexp
 
 // Initialize Module
 const UserSchema = {}
@@ -20,9 +20,7 @@ UserSchema.login = object()
 
 UserSchema.create = object()
   .shape({
-    name: string()
-      .matches(alphabetExp, 'Name should be alplabet only!')
-      .required('Name is Required!'),
+    name: string().required('Name is Required!'),
     email: string()
       .matches(emailExp, 'Invalid Email Address!')
       .required('Email is Required!'),
@@ -32,54 +30,41 @@ UserSchema.create = object()
         'Password must be at least 8 characters long and contain letters, numbers, and special characters!'
       )
       .required('Password Is Required!'),
+    city: string().optional(),
+    country: string().optional(),
   })
   .strict()
-  .noUnknown()
 
 UserSchema.update = object()
   .shape({
-    name: string()
+    firstName: string().optional(),
+    lastName: string().optional(),
+    email: string().optional().matches(emailExp, 'Invalid Email Address!'),
+    password: string()
       .optional()
-      .matches(alphabetExp, 'Name should be alplabet only!'),
-    email: string().optional().typeError('Email should Be String!'),
+      .matches(
+        passwordExp,
+        'Password must be at least 8 characters long and contain letters, numbers, and special characters!'
+      ),
   })
   .strict()
-  .noUnknown()
 
-UserSchema.updatePassword = object()
+UserSchema.find = object()
   .shape({
-    currentPassword: string()
-      .required('Old Password is Required!')
-      .matches(passwordExp, 'Invalid Password!')
-      .min(8, 'Invalid Password!')
-      .max(50, 'Invalid Password!'),
-    newPassword: string()
-      .required('New Password is Required!')
-      .notOneOf([ref('currentPassword')], 'Nothing to change!')
-      .matches(passwordExp, 'Uppercase Lowercase Special char Required')
-      .min(8, 'Password Should be minimum 8 character')
-      .max(50, 'Too long'),
-    confirmPassword: string()
-      .required('Confirm Password is Required!')
-      .when('newPassword', (password, field) =>
-        password ? field.required() : field
-      )
-      .oneOf([ref('newPassword')], 'Password does not matched'),
-  })
-  .strict()
-  .noUnknown()
-
-UserSchema.fetchAllUser = object()
-  .shape({
-    search: string().typeError('Search Value Should Be String'),
-    page: string().optional().matches(numberExp, 'Invalid Page'),
-    limit: string().optional().matches(numberExp, 'Invalid limit'),
-    sortBy: string()
-      .optional()
-      .oneOf(UserConst.sortOptions, 'Invalid sortBy value'),
+    search: string().typeError('Search Value Should be String!'),
+    page: string().optional().matches(numberExp, 'Invalid Page!'),
+    limit: string().optional().matches(numberExp, 'Invalid Limit!'),
     sortOrder: string()
       .optional()
-      .oneOf(['asc', 'desc'], 'Invalid sortOrder value'),
+      .oneOf(['asc', 'desc'], 'Invalid sortOrder Value!'),
+    sortBy: string()
+      .optional()
+      .oneOf(UserConst.sortOptions, 'Invalid SortBy Value!'),
+
+    // filter Options
+    active: string()
+      .optional()
+      .oneOf(['true', 'false'], 'Invalid Active Value'),
   })
   .strict()
   .noUnknown()

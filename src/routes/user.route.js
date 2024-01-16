@@ -12,59 +12,6 @@ const router = Router()
 const { validateRequest } = ValidateMiddleware
 
 /**
- * @description Update user Roles By UserID
- * @Route [PUT]- /api/users/roles/:userID
- * @Access protected - [admin]
- * @returns {Object} - Updated User.
- */
-router.put(
-  '/roles/:id',
-  validateRequest(UserSchema.updateRoles),
-  UserController.updateRoles
-)
-
-/**
- * @description Update User Password
- * @Route [PUT]- /api/users/password/:userID
- * @Access protected - [user, admin]
- * @returns {Object} - Updated User Docs
- */
-router.put(
-  '/password/:id',
-  validateRequest(UserSchema.updatePassword),
-  UserController.updatePassword
-)
-
-/**
- * @description Activate User By ID
- * @Route [PUT]- /api/users/activate/:userID
- * @Access protected - [user, admin]
- * @returns {Object} - Activate User Docs
- */
-router.put('/activate/:id', UserController.activate)
-
-/**
- * @description deactivate User By ID
- * @Route [PUT]- /api/users/deactivate/:userID
- * @Access protected - [user, admin]
- * @returns {Object} - DeActivate User Docs
- */
-router.put('/deactivate/:id', UserController.deactivate)
-
-/**
- * @description Upload Avatar By UserID.
- * @Route [POST]- /api/users/:userID/upload
- * @Access protected - logged in user only
- * @returns {Object} - Updated User Information and JWT Token after modifing avatar url.
- */
-router.post(
-  '/:id/upload',
-  FileMiddleware.localUpload(['image'], config.user_directory, 'avatar', 1),
-  FileMiddleware.convertToWebp(config.user_directory),
-  UserController.avatarUpload
-)
-
-/**
  * @description Delete User By UserID ***
  * @Route [DELETE]- /api/users/:userID
  * @Access protected - [admin]
@@ -88,7 +35,8 @@ router.get('/:id', UserController.getSingleUser)
  */
 router.put(
   '/:id',
-  validateRequest(UserSchema.update),
+  // validateRequest(UserSchema.update),
+  FileMiddleware.localUpload(['image'], config.user_directory, 'avatar'),
   UserController.updateUser
 )
 
@@ -98,11 +46,7 @@ router.put(
  * @Access protected - [admin]
  * @returns {Array} - All User Array.
  */
-router.get(
-  '/',
-  validateRequest(UserSchema.fetchAllUser),
-  UserController.allUsers
-)
+router.get('/', validateRequest(UserSchema.find), UserController.allUsers)
 
 // Exports
 export default router

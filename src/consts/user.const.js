@@ -1,9 +1,8 @@
 // Initialize Module
 const UserConst = {}
 
-UserConst.updateFields = []
 UserConst.searchOptions = ['name']
-UserConst.sortOptions = []
-UserConst.filterOptions = []
+UserConst.sortOptions = ['followers', 'following']
+UserConst.filterOptions = ['active']
 
 export default UserConst

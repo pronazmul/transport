@@ -1,43 +1,35 @@
 import createError from 'http-errors'
 import AuthUtils from './../utils/auth.utils.js'
-import config from '../config/index.js'
 import GlobalUtils from './../utils/global.utils.js'
-import SessionService from '../services/session.service.js'
-import AuthService from '../services/auth.service.js'
-
-const { detectDevice } = AuthUtils
+import UserService from '../services/user.service.js'
+import createHttpError from 'http-errors'
+import { compare } from 'bcrypt'
 
 // Module Export
 const AuthController = {}
 
 AuthController.register = async (req, res, next) => {
   try {
+    let data = { ...req.body }
+
+    if (data?.email) {
+      data = { ...data, email: new String(data.email).toLocaleLowerCase() }
+    }
+
+    if (req?.files?.length) {
+      data = { ...data, avatar: req.files[0].filename }
+    }
+
     // Create User
-    let user = await AuthService.register(req.body)
+    let user = await UserService.create(data)
 
-    let session = await SessionService.create({
-      user: user?._id,
-      userAgent: detectDevice(req.headers['user-agent']),
-    })
-
-    let accessToken = AuthUtils.jwtSign({ user: user, session })
-    let refreshToken = AuthUtils.jwtSign({ session }, config.refresh_token)
-
-    res.cookie('accessToken', accessToken, {
-      maxAge: config.access_token,
-      httpOnly: true,
-    })
-    res.cookie('refreshToken', refreshToken, {
-      maxAge: config.refresh_token,
-      httpOnly: true,
-    })
-
+    let token = AuthUtils.jwtSign(user)
     let response = GlobalUtils.fromatResponse(
       {
         ...user,
-        session: session?._id,
+        token: token,
       },
-      'User Created & Login Success!'
+      'User Register Success!'
     )
 
     res.status(200).json(response)
@@ -49,27 +41,19 @@ AuthController.register = async (req, res, next) => {
 AuthController.login = async (req, res, next) => {
   try {
     let { email, password } = req.body
-    let user = await AuthService.login({ email, password })
+    let user = await UserService.findOneByUserName(
+      new String(email).toLocaleLowerCase()
+    )
+    // Check Password
+    let match = await compare(password, user?.password)
+    if (!user || !match) throw createHttpError(401, 'Authentication Failed!')
+    delete user?.password
 
-    let session = await SessionService.create({
-      user: user?._id,
-      userAgent: detectDevice(req.headers['user-agent']),
-    })
-    let accessToken = AuthUtils.jwtSign({ user: user, session })
-    let refreshToken = AuthUtils.jwtSign({ session }, config.refresh_token)
-    res.cookie('accessToken', accessToken, {
-      maxAge: config.access_token,
-      httpOnly: true,
-    })
-    res.cookie('refreshToken', refreshToken, {
-      maxAge: config.refresh_token,
-      httpOnly: true,
-    })
-
+    let token = AuthUtils.jwtSign(user)
     let response = GlobalUtils.fromatResponse(
       {
         ...user,
-        session: session?._id,
+        token: token,
       },
       'User Login Success!'
     )
@@ -79,65 +63,17 @@ AuthController.login = async (req, res, next) => {
   }
 }
 
-AuthController.loggedInInfo = async (req, res, next) => {
-  const { user, session } = req
-  let response = GlobalUtils.fromatResponse(
-    {
-      ...user,
-      session: session?._id,
-    },
-    'Login Info Success!'
-  )
-  res.status(200).json(response)
-}
-
-AuthController.activeSessions = async (req, res, next) => {
+AuthController.profle = async (req, res, next) => {
   try {
-    let reqQuery = { ...req.query, user: req.params.userId, valid: true }
-    let result = await SessionService.activeSessions(reqQuery)
-
     let response = GlobalUtils.fromatResponse(
-      result?.data,
-      'Active Sessions Success!',
-      result?.meta
+      {
+        ...req.user,
+      },
+      'User Profile Success!'
     )
-
     res.status(200).json(response)
   } catch (error) {
-    console.log({ error })
-    next(createError(800, error))
-  }
-}
-
-AuthController.deactiveSession = async (req, res, next) => {
-  try {
-    let session = await SessionService.deactivateSession(req.params.sessionId)
-    let response = GlobalUtils.fromatResponse(session, 'Session End Success!')
-    res.status(200).json(response)
-  } catch (error) {
-    next(createError(500, error))
-  }
-}
-
-AuthController.logout = async (req, res, next) => {
-  try {
-    console.log({ user: req.user, session: req.session })
-
-    await SessionService.deactivateSession(req.session._id)
-    res.cookie('accessToken', '', {
-      maxAge: 0,
-      httpOnly: true,
-    })
-    res.cookie('refreshToken', '', {
-      maxAge: 0,
-      httpOnly: true,
-    })
-
-    let response = GlobalUtils.fromatResponse(null, 'Logout Success!')
-
-    res.status(200).json(response)
-  } catch (error) {
-    next(createError(500, error))
+    next(error)
   }
 }
 

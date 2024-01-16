@@ -18,14 +18,7 @@ GlobalConst.regexp = {
 
 GlobalConst.supportedMimetypes = {
   image: ['image/png', 'image/jpg', 'image/jpeg', 'image/gif', 'image/webp'],
-  video: [
-    'video/webm',
-    'video/mp4',
-    'video/avi',
-    'video/mpeg',
-    'video/quicktime',
-    'video/x-matroska',
-  ],
+  video: ['video/mp4', 'video/avi', 'video/mpeg', 'video/quicktime'],
   pdf: ['application/pdf'],
   gif: ['image/gif'],
   xlsx: ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],

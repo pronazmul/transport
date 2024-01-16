@@ -1,40 +1,116 @@
-import bcrypt from 'bcrypt'
 import UserConst from '../consts/user.const.js'
 import GlobalUtils from '../utils/global.utils.js'
 import MongooseUtils from '../utils/mongoose.utils.js'
 import UserModel from './../models/User.model.js'
-import ProjectionConst from '../consts/projection.const.js'
+import BookmarkModel from './../models/Bookmark.model.js'
+import FollowerModel from './../models/Follower.model.js'
+import FavouriteModel from './../models/Favourite.model.js'
 
 // Initialize Module
 const UserService = {}
 
-UserService.findOneById = async (id) => {
+UserService.create = async (payload) => {
+  try {
+    let NewData = new UserModel(payload)
+    let data = await NewData.save()
+    let query = { _id: NewData._id }
+    data = await UserModel.findOne(query).lean()
+    delete data?.password
+    return data
+  } catch (error) {
+    throw error
+  }
+}
+
+UserService.findOneByUserName = async (email) => {
+  try {
+    let query = { email }
+    let user = await UserModel.findOne(query).lean()
+    return user
+  } catch (error) {
+    throw createHttpError(401, 'Authentication Failed!')
+  }
+}
+
+UserService.findOneById = async (id, auth) => {
   try {
     let query = { _id: id }
-    let user = await UserModel.findById(query, ProjectionConst.user)
+    let user = await UserModel.findById(query, {
+      password: 0,
+      followers: 0,
+      following: 0,
+    }).lean()
+
+    if (user) {
+      user.bookmarkCount = await BookmarkModel.countDocuments({
+        user: user._id,
+      })
+      user.followerCount = await FollowerModel.countDocuments({
+        creator: user._id,
+      })
+      user.followingCount = await FollowerModel.countDocuments({
+        user: user._id,
+      })
+      user.favouriteCount = await FavouriteModel.countDocuments({
+        user: user._id,
+      })
+      user.followed = Boolean(
+        await FollowerModel.countDocuments({
+          creator: user._id,
+          user: auth?._id,
+        })
+      )
+    }
+
     return user
   } catch (error) {
     throw error
   }
 }
 
-UserService.find = async (reqQuery) => {
-  const { page, limit, skip, sortBy, sortOrder } =
-    GlobalUtils.calculatePagination(reqQuery)
-
-  const query = MongooseUtils.searchCondition(
-    reqQuery,
-    UserConst.searchOptions,
-    UserConst.filterOptions
-  )
-  const sort = { [sortBy]: sortOrder }
+UserService.find = async (reqQuery, user) => {
   try {
-    const users = await UserModel.find(query, ProjectionConst.user)
+    const { page, limit, skip, sortBy, sortOrder } =
+      GlobalUtils.calculatePagination(reqQuery)
+
+    const query = MongooseUtils.searchCondition(
+      reqQuery,
+      UserConst.searchOptions,
+      UserConst.filterOptions
+    )
+    const sort = { [sortBy]: sortOrder }
+    const result = await UserModel.find(query, {
+      password: 0,
+      following: 0,
+      followers: 0,
+    })
       .sort(sort)
       .skip(skip)
       .limit(limit)
+      .lean()
+
     const total = await UserModel.countDocuments(query)
-    return { data: users, meta: { page, limit, total } }
+
+    // Add (bookmark, follower, favourite) count on output
+    for (let u of result) {
+      u.bookmarkCount = await BookmarkModel.countDocuments({
+        user: u._id,
+      })
+      u.followerCount = await FollowerModel.countDocuments({
+        creator: u._id,
+      })
+      u.favouriteCount = await FavouriteModel.countDocuments({
+        user: u._id,
+      })
+      u.followed = Boolean(
+        await FollowerModel.countDocuments({
+          creator: u._id,
+          user: user?._id,
+        })
+      )
+    }
+
+    return { data: result, meta: { page, limit, total } }
   } catch (error) {
     throw error
   }
@@ -43,57 +119,8 @@ UserService.find = async (reqQuery) => {
 UserService.updateOneById = async (id, payload) => {
   try {
     let query = { _id: id }
-    let options = { new: true, select: ProjectionConst.user }
+    let options = { new: true, select: { password: 0 } }
     const result = await UserModel.findOneAndUpdate(query, payload, options)
-    return result
-  } catch (error) {
-    throw error
-  }
-}
-
-UserService.updatePassowrdById = async (id, oldPass, newPass) => {
-  try {
-    let query = { _id: id }
-    let options = { new: true, select: ProjectionConst.user }
-
-    const user = await UserModel.findById(query)
-    let isMatch = await bcrypt.compare(oldPass, user?.password)
-
-    if (user && isMatch) {
-      const password = await bcrypt.hash(newPass, 10)
-      let payload = {
-        password,
-      }
-      let result = await UserModel.findOneAndUpdate(query, payload, options)
-      return result
-    } else {
-      throw Error("Passowrd Dosen't Match!")
-    }
-  } catch (error) {
-    throw error
-  }
-}
-
-UserService.activate = async (id) => {
-  try {
-    let query = { _id: id, active: false }
-    let payload = { active: true }
-    let options = { new: true, select: ProjectionConst.user }
-    const result = await UserModel.findOneAndUpdate(query, payload, options)
-    if (!result) throw Error('Failed to Activate!')
-    return result
-  } catch (error) {
-    throw error
-  }
-}
-
-UserService.deactivate = async (id) => {
-  try {
-    let query = { _id: id, active: true }
-    let payload = { active: false }
-    let options = { new: true, select: ProjectionConst.user }
-    const result = await UserModel.findOneAndUpdate(query, payload, options)
-    if (!result) throw Error('Failed to Deactivate!')
     return result
   } catch (error) {
     throw error

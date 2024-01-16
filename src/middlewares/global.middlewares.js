@@ -33,10 +33,7 @@ const logFormat =
 
 GlobalMiddlewares.middlewares = [
   morgan(logFormat),
-  cors({
-    origin: config.allowed_origin,
-    credentials: true,
-  }),
+  cors(),
   cookieParser(),
   expressRateLimit({
     windowMs: 1 * 60 * 1000, // 1 Munite
@@ -77,19 +74,19 @@ GlobalMiddlewares.error = async (error, req, res, next) => {
   let stack = error?.stack || ''
 
   // Unlink Uploaded Files If Request Contains
-  // if (req.files) {
-  //   // Close all streams before attempting to unlink
-  //   req.files.forEach((file) => {
-  //     if (file.stream) {
-  //       file.stream.close()
-  //     }
-  //   })
+  if (req.files) {
+    // Close all streams before attempting to unlink
+    req.files.forEach((file) => {
+      if (file.stream) {
+        file.stream.close()
+      }
+    })
 
-  //   // Introduce a small delay before attempting to unlink
-  //   setTimeout(() => {
-  //     FilesUtils.removeReqFiles(req.files)
-  //   }, 1000)
-  // }
+    // Introduce a small delay before attempting to unlink
+    setTimeout(() => {
+      FilesUtils.removeReqFiles(req.files)
+    }, 1000)
+  }
 
   // Check Yup Validation Error
   if (error?.name === 'ValidationError' && error?.inner?.length) {

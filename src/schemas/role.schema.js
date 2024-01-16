@@ -1,6 +1,5 @@
 import { object, string } from 'yup'
 import GlobalConst from '../consts/global.const.js'
-import SessionConst from '../consts/session.const.js'
 
 const { numberExp } = GlobalConst.regexp
 
@@ -12,9 +11,7 @@ RoleSchema.fetchAll = object()
     search: string().typeError('Search Value Should Be String'),
     page: string().optional().matches(numberExp, 'Invalid Page'),
     limit: string().optional().matches(numberExp, 'Invalid limit'),
-    sortBy: string()
-      .optional()
-      .oneOf(SessionConst.sortOptions, 'Invalid sortBy value'),
+    sortBy: string().optional().oneOf([], 'Invalid sortBy value'),
     sortOrder: string()
       .optional()
       .oneOf(['asc', 'desc'], 'Invalid sortOrder value'),

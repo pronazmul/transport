@@ -1,8 +1,6 @@
 import { readdirSync, unlinkSync, unlink } from 'fs'
 import path from 'path'
 import multer from 'multer'
-import multers3 from 'multer-s3'
-import AWS from '@aws-sdk/client-s3'
 import createError from 'http-errors'
 import config from './../config/index.js'
 import GlobalConst from '../consts/global.const.js'
@@ -98,51 +96,6 @@ FilesUtils.multerConfig = (
       }
     },
   })
-  return upload
-}
-
-FilesUtils.s3MulterConfig = (
-  allowedMimetypes,
-  dirName,
-  filesize,
-  errorMessage = 'Unsupported File Format'
-) => {
-  const s3 = new AWS.S3Client({
-    region: config.aws_s3_region,
-    credentials: {
-      accessKeyId: config.aws_s3_key,
-      secretAccessKey: config.aws_s3_secret,
-    },
-  })
-
-  const upload = multer({
-    storage: multers3({
-      s3: s3,
-      bucket: config.aws_s3_bucket,
-      key: function (req, file, cb) {
-        const timestamp = Date.now()
-        let extname = path.extname(file.originalname)
-        const filePath = `${file.originalname
-          .replace(extname, '')
-          .split(' ')
-          .join('_')}_${timestamp}${extname}`
-        // const filename = `${dirName}/${filePath}`
-        const filename = filePath
-
-        if (!allowedMimetypes.includes(file.mimetype)) {
-          return cb(new Error('Invalid file format'))
-        }
-        cb(null, filename)
-      },
-
-      contentType: function (req, file, cb) {
-        cb(null, file.mimetype)
-      },
-      contentType: multers3.AUTO_CONTENT_TYPE, // Ensure the correct Content-Type is set based on the file's MIME type
-      acl: 'public-read', // Make uploaded files publicly accessible
-    }),
-  })
-
   return upload
 }
 
