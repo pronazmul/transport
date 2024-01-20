@@ -1,3 +1,31 @@
+// Load Dynamic Images
+document.addEventListener('DOMContentLoaded', function () {
+  // Server images Urls
+  let serverUrl = 'http://localhost:9000/images'
+
+  function loadImages() {
+    fetch(serverUrl)
+      .then((response) => {
+        return response.json()
+      })
+      .then((data) => {
+        var selectedCards = document.querySelectorAll('li.card[data-img]')
+        selectedCards.forEach(function (card) {
+          var dataImgValue = card.getAttribute('data-img')
+          var imgFront = card.querySelector('.img-front')
+          var imgBack = card.querySelector('.img-back')
+          imgFront.src = data?.find((i) => i?.name === 'qmark')?.url
+          imgBack.src = data?.find((i) => i?.name === dataImgValue)?.url
+        })
+      })
+      .catch((error) => {
+        console.error('Error loading data:', error)
+      })
+  }
+
+  loadImages()
+})
+
 NiceSelect.bind(document.getElementById('timeSelect'))
 
 const cards = document.querySelectorAll('.card')
