@@ -30,6 +30,11 @@ FilesUtils.removeAll = (dirName) => {
  */
 FilesUtils.removeOne = async (dirName, fileName) => {
   try {
+    // Check if the file name contains Server url (select only image name)
+    fileName = /(http|https)/i.test(fileName)
+      ? fileName.split('/').pop()
+      : fileName
+
     let removedPath = path.join(config.static_folder_path, dirName, fileName)
     unlink(removedPath, (error) => {
       if (error) {

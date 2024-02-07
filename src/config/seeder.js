@@ -10,6 +10,10 @@ import FollowerModel from '../models/Follower.model.js'
 import BookmarkModel from '../models/Bookmark.model.js'
 import FavouriteModel from '../models/Favourite.model.js'
 import ShareModel from '../models/Share.model.js'
+import CategoryModel from './../models/Category.model.js'
+import FeedModel from './../models/Feed.model.js'
+import NoteModel from './../models/Note.model.js'
+import FeedScheduleModel from './../models/FeedSchedule.model.js'
 
 // Demo Data
 import DummyData from './data.js'
@@ -22,6 +26,11 @@ const importData = async () => {
     await BookmarkModel.deleteMany()
     await FavouriteModel.deleteMany()
     await ShareModel.deleteMany()
+    await CategoryModel.deleteMany()
+    await NoteModel.deleteMany()
+    await FeedModel.deleteMany()
+    await FeedScheduleModel.deleteMany()
+    await FollowerModel.deleteMany()
 
     // Write Users
     let users = []
@@ -51,22 +60,6 @@ const importData = async () => {
       })
     })
 
-    // Write bookmarks
-    let bookmarks = []
-    users.forEach((u) => {
-      let randomPlaces = GlobalUtils.randomMultipleFromArray(DummyData.places)
-
-      // Insert bookmarks Conllections
-      randomPlaces.forEach((i) => {
-        bookmarks.push(
-          new BookmarkModel({
-            user: u._id,
-            place: i,
-          })
-        )
-      })
-    })
-
     // Write favourites
     let favourites = []
     users.forEach((u) => {
@@ -83,17 +76,66 @@ const importData = async () => {
       })
     })
 
+    // Write Notes & Bookmarks Togather
+    let notes = []
+    let bookmarks = []
+    users.forEach((u) => {
+      let randomPlaces = GlobalUtils.randomSingleFromArray(DummyData.places)
+
+      // Insert Notes Collection Conllections
+      notes.push(
+        new NoteModel({
+          user: u._id,
+          place: randomPlaces,
+          note: GlobalUtils.randomSingleFromArray(DummyData.notes)?.note,
+        })
+      )
+
+      // Insert Notes Collection Conllections
+      bookmarks.push(
+        new BookmarkModel({
+          user: u._id,
+          place: randomPlaces,
+        })
+      )
+    })
+
+    //Write Categories
+    let categories = DummyData.categories
+
+    // Write Feeds
+    let feeds = []
+    users.forEach((u) => {
+      if (['media', 'list'].includes(u.type)) {
+        let randomFeeds = GlobalUtils.randomMultipleFromArray(DummyData.feeds)
+        let user = users.find((us) => us.type === 'user')
+
+        // Insert favourites Conllections
+        randomFeeds.forEach((f) => {
+          feeds.push(
+            new FeedModel({
+              creator: u._id,
+              user: user._id,
+              ...f,
+            })
+          )
+        })
+      }
+    })
+
     await UserModel.create(users)
     await FollowerModel.create(followers)
-    await BookmarkModel.create(bookmarks)
     await FavouriteModel.create(favourites)
-
-    // --------------
+    await NoteModel.create(notes)
+    await CategoryModel.create(categories)
+    await BookmarkModel.create(bookmarks)
+    await FeedModel.create(feeds)
 
     console.log('Data Inserted')
     process.exit()
   } catch (error) {
-    console.log(`Error: ${error}`)
+    console.log(`Message: ${error?.message}`)
+    console.log(`Stack: ${error?.stack}`)
     process.exit(1)
   }
 }
@@ -107,6 +149,11 @@ const destroyData = async () => {
     await BookmarkModel.deleteMany()
     await FavouriteModel.deleteMany()
     await ShareModel.deleteMany()
+    await CategoryModel.deleteMany()
+    await NoteModel.deleteMany()
+    await FeedModel.deleteMany()
+    await FeedScheduleModel.deleteMany()
+    await FollowerModel.deleteMany()
 
     console.log('Data Destroyed Successfully')
     process.exit()

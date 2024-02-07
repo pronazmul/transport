@@ -3,8 +3,12 @@ import { Router } from 'express'
 
 // Middlewares
 import NoteController from '../controllers/note.controller.js'
+import ValidateMiddleware from '../middlewares/validate.middleware.js'
+import NoteSchema from '../schemas/note.schema.js'
 
 const router = Router()
+
+const { validateRequest } = ValidateMiddleware
 
 /**
  * @description All Notes by placeId
@@ -12,7 +16,7 @@ const router = Router()
  * @Access protected - []
  * @returns {Array} - All Data
  */
-router.get('/:placeId', NoteController.allNotes)
+router.get('/', validateRequest(NoteSchema.find), NoteController.allNotes)
 
 /**
  * @description Add Note By placeId

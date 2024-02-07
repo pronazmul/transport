@@ -1,28 +1,44 @@
+import FavouriteConst from '../consts/favourite.const.js'
+import ProjectionConst from '../consts/projection.const.js'
+import GlobalUtils from '../utils/global.utils.js'
+import MongooseUtils from '../utils/mongoose.utils.js'
 import FavouriteModel from './../models/Favourite.model.js'
 
 // Initialize Module
 const FavouriteService = {}
 
-FavouriteService.find = async (userId) => {
+FavouriteService.find = async (reqQuery) => {
   try {
-    const result = await FavouriteModel.find({ user: userId })
-      .populate({
-        path: 'user',
-        select: 'name bio email city country avatar followers following',
-      })
+    const { page, limit, skip, sortBy, sortOrder } =
+      GlobalUtils.calculatePagination(reqQuery)
+
+    const query = MongooseUtils.searchCondition(
+      reqQuery,
+      FavouriteConst.searchOptions,
+      FavouriteConst.filterOptions
+    )
+    const sort = { [sortBy]: sortOrder }
+
+    const result = await FavouriteModel.find(query, ProjectionConst.favourite)
+      .sort(sort)
+      .skip(skip)
+      .limit(limit)
       .lean()
-    return result
+
+    const total = await FavouriteModel.countDocuments(query)
+
+    return { data: result, meta: { page, limit, total } }
   } catch (error) {
     throw error
   }
 }
 
-FavouriteService.create = async (placeId, userId) => {
+FavouriteService.create = async (place, user) => {
   try {
-    let exists = await FavouriteModel.findOne({ place: placeId, user: userId })
-    if (exists) throw new Error('Product Already Added To Favourite!')
+    let exists = await FavouriteModel.findOne({ place: place, user: user })
+    if (exists) throw new Error('Place Already Added To Favourite!')
 
-    let newData = new FavouriteModel({ place: placeId, user: userId })
+    let newData = new FavouriteModel({ place: place, user: user })
     let result = await newData.save()
     return result
   } catch (error) {
@@ -30,9 +46,9 @@ FavouriteService.create = async (placeId, userId) => {
   }
 }
 
-FavouriteService.deleteOneById = async (placeId, userId) => {
+FavouriteService.deleteOneById = async (place, user) => {
   try {
-    let query = { place: placeId, user: userId }
+    let query = { place: place, user: user }
     let result = await FavouriteModel.findOneAndDelete(query)
     return result
   } catch (error) {

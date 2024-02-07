@@ -8,39 +8,16 @@ import BookmarkModel from '../models/Bookmark.model.js'
 import FavouriteModel from '../models/Favourite.model.js'
 import GlobalUtils from '../utils/global.utils.js'
 import FourSquareUtils from '../utils/fourSquare.utils.js'
-import NoteService from '../services/note.service.js'
 
 // Initialize Module
 const PlaceController = {}
 
 PlaceController.allPlaces = async (req, res, next) => {
   try {
-    let bookmarkIds = await BookmarkService.bookmarkedPlacesIdsByUser(
-      req?.user?._id
-    )
-    let favouriteIds = await FavouriteService.favouritePlacesIdsByUser(
-      req?.user?._id
-    )
     let places = await FourSquareUtils.searchPlaces(req.query)
-    let formattedWithCount = []
-
-    for (let item of places) {
-      let newItem = {
-        isBookmarked: Boolean(bookmarkIds.find((b) => item?.fsq_id === b)),
-        isFavourite: Boolean(favouriteIds.find((b) => item?.fsq_id === b)),
-        bookmarkCount: await BookmarkModel.countDocuments({
-          place: item?.fsq_id,
-        }),
-        favouriteCount: await FavouriteModel.countDocuments({
-          place: item?.fsq_id,
-        }),
-        ...item,
-      }
-      formattedWithCount.push(newItem)
-    }
 
     let response = GlobalUtils.fromatResponse(
-      formattedWithCount,
+      places,
       'All Places Fetch Success'
     )
     res.status(200).json(response)
@@ -69,10 +46,6 @@ PlaceController.singlePlace = async (req, res, next) => {
       favouriteCount: await FavouriteModel.countDocuments({
         place: place?.fsq_id,
       }),
-      note: await NoteService.findOneByUserAndPlace(
-        place?.fsq_id,
-        req?.user?._id
-      ),
       ...place,
     }
 

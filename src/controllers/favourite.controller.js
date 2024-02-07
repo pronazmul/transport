@@ -4,54 +4,26 @@ import createError from 'http-errors'
 // Internal Modules:
 import GlobalUtils from '../utils/global.utils.js'
 import FavouriteService from './../services/favourite.service.js'
-import BookmarkService from './../services/bookmark.service.js'
 import FourSquareUtils from '../utils/fourSquare.utils.js'
-import BookmarkModel from '../models/Bookmark.model.js'
-import FavouriteModel from '../models/Favourite.model.js'
 
 // Initialize Module
 const FavouriteController = {}
 
 FavouriteController.allFavourites = async (req, res, next) => {
   try {
-    let bookmarkIds = await BookmarkService.bookmarkedPlacesIdsByUser(
-      req?.user?._id
-    )
-    let favouriteIds = await FavouriteService.favouritePlacesIdsByUser(
-      req?.user?._id
-    )
+    let result = await FavouriteService.find(req?.query)
 
-    let userId = req.params.userId
-    let result = await FavouriteService.find(userId)
-
-    // Genereate Place & Photos
+    // Add Place Details To Response
     let resultWithPlace = []
-
-    for (let item of result) {
+    for (let item of result?.data) {
       let place = await FourSquareUtils.singlePlaceById(item?.place)
-
-      let bookmarkCount = await BookmarkModel.countDocuments({
-        place: item?.place,
-      })
-
-      let favouriteCount = await FavouriteModel.countDocuments({
-        place: item?.place,
-      })
-
-      let formatted = {
-        bookmarkCount,
-        favouriteCount,
-        isBookmarked: Boolean(bookmarkIds.find((b) => item?.place === b)),
-        isFavourite: Boolean(favouriteIds.find((b) => item?.place === b)),
-        ...place,
-      }
-
-      resultWithPlace.push({ ...item, place: formatted })
+      resultWithPlace.push({ ...item, place })
     }
 
     let response = GlobalUtils.fromatResponse(
       resultWithPlace,
-      'All Favourites Fetch Success'
+      'All Favourites Fetch Success',
+      result?.meta
     )
     res.status(200).json(response)
   } catch (error) {

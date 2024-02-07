@@ -3,7 +3,9 @@ import config from './../config/index.js'
 import axios from 'axios'
 import GlobalUtils from './global.utils.js'
 import FourSquareConst from '../consts/fourSquare.const.js'
-import NoteService from '../services/note.service.js'
+import FavouriteModel from '../models/Favourite.model.js'
+import BookmarkModel from '../models/Bookmark.model.js'
+import NoteModel from '../models/Note.model.js'
 
 // Initiazlize Object
 const FourSquareUtils = {}
@@ -60,7 +62,6 @@ FourSquareUtils.searchPlaces = async (query) => {
     if (query?.categories) {
       query.categories = FourSquareUtils.categoriesIdGenerator(query.categories)
     }
-
     query.fields = FourSquareConst.allPlacesFields
 
     // format Url using Queries
@@ -68,17 +69,26 @@ FourSquareUtils.searchPlaces = async (query) => {
       url = GlobalUtils.createQueryParams(url, query)
     }
 
+    console.log({ url })
+
     let result = await axios.request(FourSquareUtils.reqConfig(url))
 
     let formatted = []
 
     for (let item of result?.data?.results) {
       let newItem = {
-        categories: FourSquareUtils.categoriesIconMaker(item.categories),
-        note: await NoteService.findOneByUserAndPlace(
-          item?.fsq_id,
-          config?.auth?._id
+        isBookmarked: Boolean(
+          await BookmarkModel.checkBookmarked(item?.fsq_id, config?.auth?._id)
         ),
+        isFavourite: Boolean(
+          await FavouriteModel.checkFavourite(item?.fsq_id, config?.auth?._id)
+        ),
+        bookmarkCount: (await BookmarkModel.countBookmark(item?.fsq_id)) || 0,
+        favouriteCount:
+          (await FavouriteModel.countFavourite(item?.fsq_id)) || 0,
+        noteCount: (await NoteModel.countNote(item?.fsq_id)) || 0,
+        note: await NoteModel.findAuthUserNote(item?.fsq_id, config?.auth?._id),
+        categories: FourSquareUtils.categoriesIconMaker(item.categories),
         ...item,
         photos: FourSquareUtils.photosMaker(item?.photos),
       }
@@ -86,24 +96,41 @@ FourSquareUtils.searchPlaces = async (query) => {
     }
     return formatted
   } catch (error) {
+    console.log({ error })
     throw createHttpError(500, 'Failed to Load Photos!')
   }
 }
 
 FourSquareUtils.singlePlaceById = async (id) => {
   try {
-    let url = `https://api.foursquare.com/v3/places/${id}`
+    let url = `https://api.foursquare.com/v3/places/${id}?fields=${FourSquareConst.allPlacesFields}`
     let result = await axios.request(FourSquareUtils.reqConfig(url))
 
     let formatted = {
-      categories: FourSquareUtils.categoriesIconMaker(result?.data?.categories),
-      note: await NoteService.findOneByUserAndPlace(
+      isBookmarked: Boolean(
+        await FavouriteModel.checkFavourite(
+          result?.data?.fsq_id,
+          config?.auth?._id
+        )
+      ),
+      isFavourite: Boolean(
+        await BookmarkModel.checkBookmarked(
+          result?.data?.fsq_id,
+          config?.auth?._id
+        )
+      ),
+      bookmarkCount:
+        (await BookmarkModel.countBookmark(result?.data?.fsq_id)) || 0,
+      favouriteCount:
+        (await FavouriteModel.countFavourite(result?.data?.fsq_id)) || 0,
+      noteCount: (await NoteModel.countNote(result?.data?.fsq_id)) || 0,
+      note: await NoteModel.findAuthUserNote(
         result?.data?.fsq_id,
         config?.auth?._id
       ),
+      categories: FourSquareUtils.categoriesIconMaker(result?.data?.categories),
       ...result?.data,
-
-      photos: await FourSquareUtils.loadPhotosByPlaceId(result?.data?.fsq_id),
+      photos: await FourSquareUtils.photosMaker(result?.data?.photos),
     }
 
     return formatted

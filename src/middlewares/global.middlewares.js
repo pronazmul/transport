@@ -73,10 +73,17 @@ GlobalMiddlewares.error = async (error, req, res, next) => {
   let errors = []
   let stack = error?.stack || ''
 
-  // Unlink Uploaded Files If Request Contains
-  if (req.files) {
+  /*
+  - Unlink Uploaded Files If Request Contains
+  - Check Request files is array or object if object makes it into array
+  */
+  if (req?.files) {
+    let files = Array.isArray(req.files)
+      ? req.files
+      : Object.values(req.files).flat()
+
     // Close all streams before attempting to unlink
-    req.files.forEach((file) => {
+    files.forEach((file) => {
       if (file.stream) {
         file.stream.close()
       }
@@ -84,7 +91,7 @@ GlobalMiddlewares.error = async (error, req, res, next) => {
 
     // Introduce a small delay before attempting to unlink
     setTimeout(() => {
-      FilesUtils.removeReqFiles(req.files)
+      FilesUtils.removeReqFiles(files)
     }, 1000)
   }
 
@@ -112,6 +119,7 @@ GlobalMiddlewares.error = async (error, req, res, next) => {
   if (error?.name === 'CastError') {
     statusCode = 400
     message = 'Invalid parameter Value'
+    console.log({ x: error })
   }
 
   // Handle MongoServerError (Duplicate Key Error)

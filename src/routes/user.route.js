@@ -7,6 +7,7 @@ import ValidateMiddleware from '../middlewares/validate.middleware.js'
 import UserController from './../controllers/user.controller.js'
 import FileMiddleware from '../middlewares/file.middlewares.js'
 import config from '../config/index.js'
+import UserConst from '../consts/user.const.js'
 
 const router = Router()
 const { validateRequest } = ValidateMiddleware
@@ -35,8 +36,12 @@ router.get('/:id', UserController.getSingleUser)
  */
 router.put(
   '/:id',
-  // validateRequest(UserSchema.update),
-  FileMiddleware.localUpload(['image'], config.user_directory, 'avatar'),
+  FileMiddleware.localUploadMultipleFields(
+    ['image'],
+    config.user_directory,
+    UserConst.userImagesFields
+  ),
+  validateRequest(UserSchema.update),
   UserController.updateUser
 )
 

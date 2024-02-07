@@ -12,12 +12,22 @@ AuthController.register = async (req, res, next) => {
   try {
     let data = { ...req.body }
 
+    // Make Email to Lowercase before
     if (data?.email) {
       data = { ...data, email: new String(data.email).toLocaleLowerCase() }
     }
 
-    if (req?.files?.length) {
-      data = { ...data, avatar: req.files[0].filename }
+    // Add Avatar To User Object If have
+    if (req?.files?.avatar) {
+      data = { ...data, avatar: req.files?.avatar[0].filename }
+    }
+
+    // Add Background Image to User Object If Have
+    if (req?.files?.backgroundImage) {
+      data = {
+        ...data,
+        backgroundImage: req.files?.backgroundImage[0].filename,
+      }
     }
 
     // Create User

@@ -11,7 +11,7 @@ const UserController = {}
 
 UserController.getSingleUser = async (req, res, next) => {
   try {
-    let data = await UserService.findOneById(req.params.id, req?.user)
+    let data = await UserService.findOneById(req.params.id)
     let response = GlobalUtils.fromatResponse(
       data,
       'Single User Fetch success!'
@@ -24,7 +24,7 @@ UserController.getSingleUser = async (req, res, next) => {
 
 UserController.allUsers = async (req, res, next) => {
   try {
-    let result = await UserService.find(req.query, req?.user)
+    let result = await UserService.find(req.query)
     let response = GlobalUtils.fromatResponse(
       result?.data,
       'All User Fetch success',

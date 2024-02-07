@@ -137,7 +137,9 @@ MongooseUtils.searchCondition = (
   if (filterOptions.length) {
     andCondition.push({
       $and: filterOptions.map((key) => ({
-        [key]: reqQuery[key],
+        [key]: Array.isArray(reqQuery[key])
+          ? { $in: reqQuery[key] }
+          : reqQuery[key],
       })),
     })
   }

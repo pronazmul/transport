@@ -1,34 +1,37 @@
+import NoteConst from '../consts/note.const.js'
+import ProjectionConst from '../consts/projection.const.js'
 import NoteModel from '../models/Note.model.js'
+import GlobalUtils from '../utils/global.utils.js'
+import MongooseUtils from '../utils/mongoose.utils.js'
 
 // Initialize Module
 const NoteService = {}
 
-NoteService.find = async (placeId, followings) => {
+NoteService.find = async (reqQuery) => {
   try {
-    const result = await NoteModel.find({
-      place: placeId,
-      user: { $in: followings },
-    })
+    const { page, limit, skip, sortBy, sortOrder } =
+      GlobalUtils.calculatePagination(reqQuery)
+
+    const query = MongooseUtils.searchCondition(
+      reqQuery,
+      NoteConst.searchOptions,
+      NoteConst.filterOptions
+    )
+    const sort = { [sortBy]: sortOrder }
+
+    const result = await NoteModel.find(query, ProjectionConst.note)
       .populate({
         path: 'user',
-        select: '_id',
+        select: ProjectionConst.user,
       })
+      // .sort(sort)
+      .skip(skip)
+      .limit(limit)
       .lean()
 
-    return result
-  } catch (error) {
-    throw error
-  }
-}
+    const total = await NoteModel.countDocuments(query)
 
-NoteService.findOneByUserAndPlace = async (placeId, userId) => {
-  try {
-    const result = await NoteModel.findOne({
-      place: placeId,
-      user: userId,
-    }).lean()
-
-    return result
+    return { data: result, meta: { page, limit, total } }
   } catch (error) {
     throw error
   }
@@ -60,21 +63,23 @@ NoteService.deleteOneById = async (id, userId) => {
   }
 }
 
-NoteService.deleteByUserAndPlace = async (user, place) => {
+NoteService.updateOneById = async (id, userId, payload) => {
   try {
-    let query = { user, place }
-    let result = await NoteModel.findOneAndDelete(query)
+    let query = { _id: id, user: userId }
+    let options = { new: true }
+    let result = await NoteModel.findOneAndUpdate(query, payload, options)
     return result
   } catch (error) {
     throw error
   }
 }
 
-NoteService.updateOneById = async (id, userId, payload) => {
+NoteService.findOneByPlaceAndUser = async (place, user) => {
   try {
-    let query = { _id: id, user: userId }
-    let options = { new: true }
-    let result = await NoteModel.findOneAndUpdate(query, payload, options)
+    const result = await NoteModel.find({
+      place: place,
+      user: user,
+    }).lean()
     return result
   } catch (error) {
     throw error

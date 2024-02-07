@@ -1,28 +1,43 @@
+import BookmarkConst from '../consts/Bookmark.const.js'
+import ProjectionConst from '../consts/projection.const.js'
+import GlobalUtils from '../utils/global.utils.js'
+import MongooseUtils from '../utils/mongoose.utils.js'
 import BookmarkModel from './../models/Bookmark.model.js'
 
 // Initialize Module
 const BookmarkService = {}
 
-BookmarkService.find = async (userId) => {
+BookmarkService.find = async (reqQuery) => {
   try {
-    const result = await BookmarkModel.find({ user: userId })
-      .populate({
-        path: 'user',
-        select: 'name bio email city country avatar followers following',
-      })
+    const { page, limit, skip, sortBy, sortOrder } =
+      GlobalUtils.calculatePagination(reqQuery)
+
+    const query = MongooseUtils.searchCondition(
+      reqQuery,
+      BookmarkConst.searchOptions,
+      BookmarkConst.filterOptions
+    )
+    const sort = { [sortBy]: sortOrder }
+    const result = await BookmarkModel.find(query, ProjectionConst.bookmark)
+      .sort(sort)
+      .skip(skip)
+      .limit(limit)
       .lean()
-    return result
+
+    const total = await BookmarkModel.countDocuments(query)
+
+    return { data: result, meta: { page, limit, total } }
   } catch (error) {
     throw error
   }
 }
 
-BookmarkService.create = async (placeId, userId) => {
+BookmarkService.create = async (place, user) => {
   try {
-    let exists = await BookmarkModel.findOne({ place: placeId, user: userId })
-    if (exists) throw new Error('Product Already Added To Bookmark!')
+    let exists = await BookmarkModel.findOne({ place: place, user: user })
+    if (exists) throw new Error('Place Already Added To Bookmark!')
 
-    let newData = new BookmarkModel({ place: placeId, user: userId })
+    let newData = new BookmarkModel({ place: place, user: user })
     let result = await newData.save()
     return result
   } catch (error) {
@@ -30,9 +45,9 @@ BookmarkService.create = async (placeId, userId) => {
   }
 }
 
-BookmarkService.deleteOneById = async (placeId, userId) => {
+BookmarkService.deleteOneById = async (place) => {
   try {
-    let query = { place: placeId, user: userId }
+    let query = { place: place }
     let result = await BookmarkModel.findOneAndDelete(query)
     return result
   } catch (error) {

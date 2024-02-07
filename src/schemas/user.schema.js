@@ -1,4 +1,4 @@
-import { object, string } from 'yup'
+import { array, number, object, string } from 'yup'
 import GlobalConst from '../consts/global.const.js'
 import UserConst from './../consts/user.const.js'
 
@@ -6,6 +6,7 @@ const { emailExp, passwordExp, numberExp } = GlobalConst.regexp
 
 // Initialize Module
 const UserSchema = {}
+
 UserSchema.login = object()
   .shape({
     email: string()
@@ -16,38 +17,42 @@ UserSchema.login = object()
       .required('Password Is Required!'),
   })
   .strict()
-  .noUnknown()
 
 UserSchema.create = object()
   .shape({
     name: string().required('Name is Required!'),
-    email: string()
-      .matches(emailExp, 'Invalid Email Address!')
-      .required('Email is Required!'),
-    password: string()
-      .matches(
-        passwordExp,
-        'Password must be at least 8 characters long and contain letters, numbers, and special characters!'
-      )
-      .required('Password Is Required!'),
-    city: string().optional(),
-    country: string().optional(),
+    email: string().optional().matches(emailExp, 'Invalid Email'),
+    password: string().optional().matches(passwordExp, 'Invalid Password'),
+    type: string()
+      .oneOf(UserConst.registerAllowedType)
+      .default(UserConst.defaultType),
+    location: object()
+      .shape({
+        name: string(),
+        type: string().oneOf(['Point']).default('Point'),
+        coordinates: array().of(number()).default([0, 0]),
+      })
+      .optional(),
   })
   .strict()
+  .noUnknown()
 
 UserSchema.update = object()
   .shape({
-    firstName: string().optional(),
-    lastName: string().optional(),
-    email: string().optional().matches(emailExp, 'Invalid Email Address!'),
-    password: string()
-      .optional()
-      .matches(
-        passwordExp,
-        'Password must be at least 8 characters long and contain letters, numbers, and special characters!'
-      ),
+    name: string().optional(),
+    email: string().optional().matches(emailExp, 'Invalid Email'),
+    password: string().optional().matches(passwordExp, 'Invalid Password'),
+    type: string().optional().oneOf(UserConst.registerAllowedType),
+    location: object()
+      .shape({
+        name: string(),
+        type: string().oneOf(['Point']).default('Point'),
+        coordinates: array().of(number()).default([0, 0]),
+      })
+      .optional(),
   })
   .strict()
+  .noUnknown()
 
 UserSchema.find = object()
   .shape({
@@ -62,6 +67,7 @@ UserSchema.find = object()
       .oneOf(UserConst.sortOptions, 'Invalid SortBy Value!'),
 
     // filter Options
+    type: string().optional().oneOf(UserConst.userType, 'Invalid User Type'),
     active: string()
       .optional()
       .oneOf(['true', 'false'], 'Invalid Active Value'),

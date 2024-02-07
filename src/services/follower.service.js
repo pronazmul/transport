@@ -1,81 +1,54 @@
-import BookmarkModel from '../models/Bookmark.model.js'
+import FollowerConst from '../consts/follower.const.js'
+import ProjectionConst from '../consts/projection.const.js'
 import FollowerModel from '../models/Follower.model.js'
-import FavouriteModel from './../models/Favourite.model.js'
+import GlobalUtils from '../utils/global.utils.js'
+import MongooseUtils from '../utils/mongoose.utils.js'
 
 // Initialize Module
 const FollowerService = {}
 
-FollowerService.find = async (creatorId, type = 'followers', auth) => {
+FollowerService.find = async (reqQuery) => {
   try {
-    let result
-    if (type === 'followedBy') {
-      result = await FollowerModel.find({ user: creatorId })
-        .populate({
-          path: 'creator',
-          select: 'name bio email city country avatar',
-        })
-        .lean()
+    const { page, limit, skip, sortBy, sortOrder } =
+      GlobalUtils.calculatePagination(reqQuery)
 
-      // Add (bookmark, follower, favourite) count on output
-      for (let u of result) {
-        u.creator.bookmarkCount = await BookmarkModel.countDocuments({
-          user: u.creator._id,
-        })
-        u.creator.followerCount = await FollowerModel.countDocuments({
-          creator: u.creator._id,
-        })
-        u.creator.favouriteCount = await FavouriteModel.countDocuments({
-          user: u.creator._id,
-        })
-        u.creator.followed = Boolean(
-          await FollowerModel.countDocuments({
-            creator: u.creator._id,
-            user: auth?._id,
-          })
-        )
-      }
-    } else {
-      result = await FollowerModel.find({ creator: creatorId })
-        .populate({
-          path: 'user',
-          select: 'name bio email city country avatar',
-        })
-        .lean()
+    const query = MongooseUtils.searchCondition(
+      reqQuery,
+      FollowerConst.searchOptions,
+      FollowerConst.filterOptions
+    )
+    const sort = { [sortBy]: sortOrder }
+    const result = await FollowerModel.find(query, ProjectionConst.follower)
+      .populate({
+        path: 'user',
+        select: ProjectionConst.userFollower,
+      })
+      .populate({
+        path: 'creator',
+        select: ProjectionConst.userFollower,
+      })
+      .sort(sort)
+      .skip(skip)
+      .limit(limit)
+      .lean()
 
-      // Add (bookmark, follower, favourite) count on output
-      for (let u of result) {
-        u.user.bookmarkCount = await BookmarkModel.countDocuments({
-          user: u.user._id,
-        })
-        u.user.followerCount = await FollowerModel.countDocuments({
-          creator: u.user._id,
-        })
-        u.user.favouriteCount = await FavouriteModel.countDocuments({
-          user: u.user._id,
-        })
-        u.user.followed = Boolean(
-          await FollowerModel.countDocuments({
-            creator: u.user._id,
-            user: auth?._id,
-          })
-        )
-      }
-    }
-    return result
+    const total = await FollowerModel.countDocuments(query)
+
+    return { data: result, meta: { page, limit, total } }
   } catch (error) {
     throw error
   }
 }
 
-FollowerService.create = async (creatorId, userId) => {
+FollowerService.create = async (creator, user) => {
   try {
     let exists = await FollowerModel.findOne({
-      creator: creatorId,
-      user: userId,
+      creator: creator,
+      user: user,
     })
     if (exists) throw new Error('User Already Followed!')
 
-    let newRole = new FollowerModel({ creator: creatorId, user: userId })
+    let newRole = new FollowerModel({ creator: creator, user: user })
     let result = await newRole.save()
     return result
   } catch (error) {
@@ -84,7 +57,6 @@ FollowerService.create = async (creatorId, userId) => {
 }
 
 FollowerService.deleteOneById = async (creator, user) => {
-  console.log({ creator, user })
   try {
     let query = { creator: creator, user: user }
     let result = await FollowerModel.findOneAndDelete(query)

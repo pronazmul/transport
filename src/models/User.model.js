@@ -1,24 +1,43 @@
-// Required Packeges
 import { Schema, model } from 'mongoose'
 import uniqueValidator from 'mongoose-unique-validator'
 import { hash } from 'bcrypt'
 import config from '../config/index.js'
+import UserConst from '../consts/user.const.js'
+import FollowerModel from './Follower.model.js'
+import FilesUtils from '../utils/files.utils.js'
 
 const UserSchema = Schema(
   {
     name: { type: String, required: true },
-    email: {
+    email: { type: String, unique: true },
+    password: { type: String },
+    type: {
       type: String,
-      unique: true,
-      required: true,
+      enum: UserConst.userType,
+      default: UserConst.defaultType,
     },
     bio: String,
-    password: { type: String },
-    city: String,
-    country: String,
+    location: {
+      name: String,
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: 'Point',
+      },
+      coordinates: {
+        type: [Number],
+        index: '2dsphere',
+        default: [0, 0],
+      },
+    },
     avatar: { type: String },
-    followers: { type: Number, default: 0 },
-    following: { type: Number, default: 0 },
+    backgroundImage: { type: String },
+    followerCount: { type: Number, default: 0 },
+    followingCount: { type: Number, default: 0 },
+    bookmarkCount: { type: Number, default: 0 },
+    favoriteCount: { type: Number, default: 0 },
+    noteCount: { type: Number, default: 0 },
+    shareCount: { type: Number, default: 0 },
     active: { type: Boolean, default: true },
   },
   {
@@ -38,41 +57,81 @@ UserSchema.pre('save', async function (next) {
 })
 
 // Post-middleware function
-UserSchema.post(/^find|^findOne|^findById/, function (docs, next) {
+UserSchema.post(/^find|^findOne|^findById/, async function (docs, next) {
+  let auth = config.auth
+
   // Check the response is object
-  if (typeof docs === 'object' && !Array.isArray(docs) && docs?.avatar) {
-    docs.avatar = `${config.server_url}/${config.user_directory}/${docs.avatar}`
+  if (typeof docs === 'object' && !Array.isArray(docs)) {
+    if (docs?.avatar) {
+      docs.avatar = `${config.server_url}/${config.user_directory}/${docs.avatar}`
+    }
+    if (docs?.backgroundImage) {
+      docs.backgroundImage = `${config.server_url}/${config.user_directory}/${docs.backgroundImage}`
+    }
+
+    if (auth?._id) {
+      docs.followed = Boolean(
+        await FollowerModel.checkFollowed(docs?._id, auth?._id)
+      )
+    }
   }
 
   // Check IF the response is object
   if (Array.isArray(docs)) {
-    let transformedDocs = docs.map((item) => {
+    let transformedDocs = []
+
+    for (let item of docs) {
       if (item?.avatar) {
         item.avatar = `${config.server_url}/${config.user_directory}/${item.avatar}`
       }
-      delete item.password
-      return item
-    })
+      if (item?.backgroundImage) {
+        item.backgroundImage = `${config.server_url}/${config.user_directory}/${item.backgroundImage}`
+      }
+      if (auth?._id) {
+        item.followed = Boolean(
+          await FollowerModel.checkFollowed(item?._id, auth?._id)
+        )
+      }
+      transformedDocs.push(item)
+    }
     docs = transformedDocs
   }
   next()
 })
 
+// Post-middleware function
+UserSchema.post(
+  /^deleteOne|^deleteOneById|^findOneAndDelete/,
+  async function (docs, next) {
+    if (typeof docs === 'object' && !Array.isArray(docs)) {
+      // Remove Background Image And Avatar
+      if (docs?.avatar)
+        FilesUtils.removeOne(config.user_directory, docs?.avatar)
+
+      if (docs?.backgroundImage)
+        FilesUtils.removeOne(config.user_directory, docs?.backgroundImage)
+    }
+
+    // Check IF the response is object
+    // if (Array.isArray(docs)) {
+    //   let transformedDocs = []
+
+    //   for (let item of docs) {
+    //     transformedDocs.push(item)
+    //   }
+    //   docs = transformedDocs
+    // }
+    next()
+  }
+)
+
 // Static Functions
-UserSchema.statics.incrementFollower = function (id) {
-  return this.findOneAndUpdate({ _id: id }, { $inc: { followers: 1 } })
+UserSchema.statics.incrementCount = function (id, fieldName) {
+  return this.findOneAndUpdate({ _id: id }, { $inc: { [fieldName]: 1 } })
 }
 
-UserSchema.statics.decrementFollower = function (id) {
-  return this.findOneAndUpdate({ _id: id }, { $inc: { followers: -1 } })
-}
-
-UserSchema.statics.incrementFollowing = function (id) {
-  return this.findOneAndUpdate({ _id: id }, { $inc: { following: 1 } })
-}
-
-UserSchema.statics.decrementFollowing = function (id) {
-  return this.findOneAndUpdate({ _id: id }, { $inc: { following: -1 } })
+UserSchema.statics.decrementCount = function (id, fieldName) {
+  return this.findOneAndUpdate({ _id: id }, { $inc: { [fieldName]: -1 } })
 }
 
 // Make User Model

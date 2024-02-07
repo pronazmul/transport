@@ -6,9 +6,9 @@ import AuthMiddleware from './../middlewares/auth.middlewares.js'
 import ValidateMiddleware from './../middlewares/validate.middleware.js'
 import FileMiddleware from '../middlewares/file.middlewares.js'
 import config from '../config/index.js'
+import UserConst from '../consts/user.const.js'
 
 const router = Router()
-const { authenticate } = AuthMiddleware
 const { validateRequest } = ValidateMiddleware
 
 /**
@@ -19,7 +19,11 @@ const { validateRequest } = ValidateMiddleware
  */
 router.post(
   '/register',
-  FileMiddleware.localUpload(['image'], config.user_directory, 'avatar'),
+  FileMiddleware.localUploadMultipleFields(
+    ['image'],
+    config.user_directory,
+    UserConst.uploads
+  ),
   validateRequest(UserSchema.create),
   AuthController.register
 )

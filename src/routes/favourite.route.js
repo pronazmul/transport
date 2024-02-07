@@ -3,16 +3,23 @@ import { Router } from 'express'
 
 // Middlewares
 import FavouriteController from './../controllers/favourite.controller.js'
+import ValidateMiddleware from '../middlewares/validate.middleware.js'
+import FavouriteSchema from './../schemas/favourite.schema.js'
 
 const router = Router()
+const { validateRequest } = ValidateMiddleware
 
 /**
  * @description All Favoutites by User
- * @Route [GET]- /api/favourites/:userId
+ * @Route [GET]- /api/favourites
  * @Access protected - []
  * @returns {Array} - All Data
  */
-router.get('/:userId', FavouriteController.allFavourites)
+router.get(
+  '/',
+  validateRequest(FavouriteSchema.find),
+  FavouriteController.allFavourites
+)
 
 /**
  * @description Add to Favourite
