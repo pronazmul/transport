@@ -1,4 +1,4 @@
-import BookmarkConst from '../consts/Bookmark.const.js'
+import BookmarkConst from '../consts/bookmark.const.js'
 import ProjectionConst from '../consts/projection.const.js'
 import GlobalUtils from '../utils/global.utils.js'
 import MongooseUtils from '../utils/mongoose.utils.js'

@@ -1,6 +1,6 @@
 import { object, string } from 'yup'
+import BookmarkConst from '../consts/bookmark.const.js'
 import GlobalConst from '../consts/global.const.js'
-import BookmarkConst from '../consts/Bookmark.const.js'
 
 const { emailExp, passwordExp, numberExp } = GlobalConst.regexp
 
