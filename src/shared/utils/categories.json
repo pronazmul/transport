@@ -1,0 +1,232 @@
+[
+    {
+        "children": [
+            "Fish",
+            "Meat"
+        ],
+        "status": "Hide",
+        "_id": "6330a9cb0c00bd8a2c022845",
+        "parent": "Fish & Meat",
+        "type": "Grocery",
+        "icon": "https://i.ibb.co/y0zXYj5/carp-fish.png",
+        "__v": 0
+    },
+    {
+        "children": [
+            "Dry Fruits",
+            "Fresh Fruits",
+            "Fresh Vegetable"
+        ],
+        "status": "Show",
+        "_id": "6330a9cb0c00bd8a2c022844",
+        "parent": "Fruits & Vegetable",
+        "type": "Grocery",
+        "icon": "https://i.postimg.cc/RZ275n3f/cabbage.png",
+        "__v": 0
+    },
+    {
+        "children": [
+            "Fresh Seafood"
+        ],
+        "status": "Hide",
+        "_id": "6330a9cb0c00bd8a2c022843",
+        "parent": "Fresh Seafood",
+        "type": "Grocery",
+        "icon": "https://i.ibb.co/pfscwF4/shrimp.png",
+        "__v": 0
+    },
+    {
+        "children": [
+            "Oil",
+            "Rice",
+            "Flour",
+            "Dry Vegetable",
+            "Spices & Mixes"
+        ],
+        "status": "Show",
+        "_id": "6330a9cb0c00bd8a2c022842",
+        "parent": "Cooking Essentials",
+        "type": "Grocery",
+        "icon": "https://i.ibb.co/hBv30Rt/frying-pan.png",
+        "__v": 0
+    },
+    {
+        "children": [
+            "Bread",
+            "Cereal"
+        ],
+        "status": "Show",
+        "_id": "6330a9cb0c00bd8a2c022841",
+        "parent": "Breakfast",
+        "type": "Grocery",
+        "icon": "https://i.ibb.co/dgPzSt7/bagel.png",
+        "__v": 0
+    },
+    {
+        "children": [
+            "Tea",
+            "Water",
+            "Juice",
+            "Coffee",
+            "Energy Drinks"
+        ],
+        "status": "Show",
+        "_id": "6330a9cb0c00bd8a2c022840",
+        "parent": "Drinks",
+        "type": "Grocery",
+        "icon": "https://i.ibb.co/Dz8LKDX/soft-drink.png",
+        "__v": 0
+    },
+    {
+        "children": [
+            "Dairy",
+            "Ice Cream",
+            "Butter & Ghee"
+        ],
+        "status": "Show",
+        "_id": "6330a9cb0c00bd8a2c02283f",
+        "parent": "Milk & Dairy",
+        "type": "Grocery",
+        "icon": "https://i.ibb.co/181Qpm8/milk.png",
+        "__v": 0
+    },
+    {
+        "children": [
+            "Organic Food"
+        ],
+        "status": "Show",
+        "_id": "6330a9cb0c00bd8a2c02283e",
+        "parent": "Organic Food",
+        "type": "Grocery",
+        "icon": "https://i.ibb.co/xmGhNRF/apple.png",
+        "__v": 0
+    },
+    {
+        "children": [
+            "Honey"
+        ],
+        "status": "Show",
+        "_id": "6330a9cb0c00bd8a2c02283d",
+        "parent": "Honey",
+        "type": "Grocery",
+        "icon": "https://i.postimg.cc/65JSfy6H/honey-1.png",
+        "__v": 0
+    },
+    {
+        "children": [
+            "Sauces",
+            "Pickles & Condiments"
+        ],
+        "status": "Show",
+        "_id": "6330a9cb0c00bd8a2c02283c",
+        "parent": "Sauces & Pickles",
+        "type": "Grocery",
+        "icon": "https://i.postimg.cc/mk09xvk4/chili-sauce.png",
+        "__v": 0
+    },
+    {
+        "children": [
+            "Jam & Jelly"
+        ],
+        "status": "Show",
+        "_id": "6330a9cb0c00bd8a2c02283b",
+        "parent": "Jam & Jelly",
+        "type": "Grocery",
+        "icon": "https://i.postimg.cc/rmLvfsMC/strawberry-jam-1.png",
+        "__v": 0
+    },
+    {
+        "children": [
+            "Chocolate",
+            "Chips & Nuts",
+            "Canned Food"
+        ],
+        "status": "Show",
+        "_id": "6330a9cb0c00bd8a2c02283a",
+        "parent": "Snacks & Instant",
+        "type": "Grocery",
+        "icon": "https://i.ibb.co/HT7c6VT/chips.png",
+        "__v": 0
+    },
+    {
+        "children": [
+            "Cakes",
+            "Biscuits"
+        ],
+        "status": "Show",
+        "_id": "6330a9cb0c00bd8a2c022839",
+        "parent": "Biscuits & Cakes",
+        "type": "Grocery",
+        "icon": "https://i.postimg.cc/0jVF5Cmc/cookie.png",
+        "__v": 0
+    },
+    {
+        "children": [
+            "Cleaner",
+            "Laundry",
+            "Air Freshener",
+            "Water Filter",
+            "Pest Control",
+            "Cleaning Tools"
+        ],
+        "status": "Show",
+        "_id": "6330a9cb0c00bd8a2c022838",
+        "parent": "Household Tools",
+        "type": "Home Accessories",
+        "icon": "https://i.ibb.co/rdY6zL0/cleaner.png",
+        "__v": 0
+    },
+    {
+        "children": [
+            "Baby Food",
+            "Baby Accessories"
+        ],
+        "status": "Show",
+        "_id": "6330a9cb0c00bd8a2c022837",
+        "parent": "Baby Care",
+        "type": "Health Care",
+        "icon": "https://i.postimg.cc/QNqrnQBB/baby.png",
+        "__v": 0
+    },
+    {
+        "children": [
+            "Cat Care",
+            "Dog Care",
+            "Bird Care"
+        ],
+        "status": "Show",
+        "_id": "6330a9cb0c00bd8a2c022836",
+        "parent": "Pet Care",
+        "type": "Grocery",
+        "icon": "https://i.postimg.cc/RVVzrWfg/cat.png",
+        "__v": 0
+    },
+    {
+        "children": [
+            "Bath",
+            "Cosmetics",
+            "Oral Care",
+            "Skin Care",
+            "Body Care",
+            "Shaving Needs"
+        ],
+        "status": "Hide",
+        "_id": "6330a9cb0c00bd8a2c022835",
+        "parent": "Beauty & Health",
+        "type": "Health Care",
+        "icon": "https://i.postimg.cc/gjz1P7wx/beauty.png",
+        "__v": 0
+    },
+    {
+        "children": [
+            "Sports",
+            "Fitness"
+        ],
+        "status": "Show",
+        "_id": "6330a9cb0c00bd8a2c022834",
+        "parent": "Sports & Fitness",
+        "type": "Sports & Fitness",
+        "icon": "https://i.ibb.co/qNCvxT0/dumbbell.png",
+        "__v": 0
+    }
+]
